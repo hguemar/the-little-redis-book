@@ -13,7 +13,7 @@ Ce livre est librement distribué sous la licence [Attribution-NonCommercial 3.0
 
 ## Version originale et Traductions ##
 
-* [Version originale -Anglais](https://github.com/dloureiro/the-little-redis-book)
+* [Version originale - Anglais](https://github.com/dloureiro/the-little-redis-book)
 * [Russe](https://github.com/kondratovich/the-little-redis-book)
 * [Italien](https://github.com/sandroconforto/the-little-redis-book) - [pdf](https://github.com/sandroconforto/the-little-redis-book/raw/master/book/redisIt.pdf)
 * [Chinois](https://github.com/JasonLai256/the-little-redis-book)
