@@ -79,91 +79,94 @@ If you are having problems with the above setup I suggest you seek help in the [
 
 As you'll soon learn, Redis' API is best described as an explicit set of functions. It has a very simple and procedural feel to it. This means that whether you are using the command line tool, or a driver for your favorite language, things are very similar. Therefore, you shouldn't have any problems following along if you prefer to work from a programming language. If you want, head over to the [client page](http://redis.io/clients) and download the appropriate driver.
 
-# Chapter 1 - The Basics
+# Chapitre 1 - Les bases
 
-What makes Redis special? What types of problems does it solve? What should developers watch out for when using it? Before we can answer any of these questions, we need to understand what Redis is.
+Qu'est-ce qui rends Redis spécial ? Quelle classe de problèmes résout-il ? Quels sont les points d'achoppement que les développeurs doivent faire attention lorsqu'ils l'utilisent ? Avant de pouvoir répondre à toutes ces questions, nous devons comprendre ce qu'est Redis.
 
-Redis is often described as an in-memory persistent key-value store. I don't think that's an accurate description. Redis does hold all the data in memory (more on this in a bit), and it does write that out to disk for persistence, but it's much more than a simple key-value store. It's important to step beyond this misconception otherwise your perspective of Redis and the problems it solves will be too narrow.
+Redis est souvent décrit comme un moteur de stockage clé/valeur en mémoire persistent. Je ne crois pas que ça soit une description exacte. En effet, Redis stocke toutes les données en mémoire (nous en saurons plus dans quelques instants), et il persiste bien les données sur disque, mais il est bien plus qu'un simple moteur de stockage clé/valeur. Il est essentiel de dépasser cette idée reçue sous peine de réduire votre perspective de Redis et des problèmes qu'il est capable de résoudre.
 
-The reality is that Redis exposes five different data structures, only one of which is a typical key-value structure. Understanding these five data structures, how they work, what methods they expose and what you can model with them is the key to understanding Redis. First though, let's wrap our heads around what it means to expose data structures.
+En réalité, Redis expose cinq structures de données différentes, une seule d'entre elle peut être définie comme une structure clé/valeur traditionnelle. En comprenant ces cinq structures de données, leur fonctionnements, leurs interfaces et ce que vous pouvez modéliser avec, constitue la clé pour comprendre Redis. Mais commençons d'abord par nous pencher sur la signifaction de ce qu'est l'interface d'une structure de données.
 
-If we were to apply this data structure concept to the relational world, we could say that databases expose a single data structure - tables. Tables are both complex and flexible. There isn't much you can't model, store or manipulate with tables. However, their generic nature isn't without drawbacks. Specifically, not everything is as simple, or as fast, as it ought to be. What if, rather than having a one-size-fits-all structure, we used more specialized structures? There might be some things we can't do (or at least, can't do very well), but surely we'd gain in simplicity and speed?
+Si nous devions appliquer ce concept de structure de données au monde relationnel, nous pourrions affirmer que les bases de données exposent une unique structure de données : les tables. Les tables sont à la fois complexe et flexible. Il n'y a pas grand-chose que l'on ne puisse modéliser, stocker ou manipuler avec les tables. Cependant, leur nature générique n'est pas sans inconvénients. Plus particulièrement, tout n'est pas aussi simple ou rapide, que ce que cela devrait être. Et si, plutôt que d'avoir une seule structure de données unique, nous utilisions des structures spécialisées ? Certes, il y aura des choses que l'on ne pourra pas faire (ou pas aisément du moins), mais ne gagnerions-nous pas en simplicité et rapidité ?
 
-Using specific data structures for specific problems? Isn't that how we code? You don't use a hashtable for every piece of data, nor do you use a scalar variable. To me, that defines Redis' approach. If you are dealing with scalars, lists, hashes, or sets, why not store them as scalars, lists, hashes and sets? Why should checking for the existence of a value be any more complex than calling `exists(key)` or slower than O(1) (constant time lookup which won't slow down regardless of how many items there are)?
+Utiliser des structures de données spécifiques pour des problèmes spécifiques ? Mais n'est-ce pas notre façon d'agir lorsque nous codons ? Nous n'utilisons pas d'une table de hachage pour chaque donnée, ni n'utilisons une variable scalaire. C'est pour moi ce qui caractérise l'approche de Redis. Si vous devez gérer des scalaires, listes, listes de hachages ou ensembles, pourquoi ne pas les stocker en tant que scalaires, listes, listes de hachages ou ensembles ? Pourquoi vérifier l'existence d'une variable devrait être plus complexe que d'appeler `exists(key)` ou plus lent que 0(1) (recherche à temps constants qui ne ralentira pas quelque soit la quantité de données stockée) ?
 
-# The Building Blocks
 
-## Databases
+# Les briques de bases
 
-Redis has the same basic concept of a database that you are already familiar with. A database contains a set of data. The typical use-case for a database is to group all of an application's data together and to keep it separate from another application's.
+## Bases de données
 
-In Redis, databases are simply identified by a number with the default database being number `0`. If you want to change to a different database you can do so via the `select` command. In the command line interface, type `select 1`. Redis should reply with an `OK` message and your prompt should change to something like `redis 127.0.0.1:6379[1]>`. If you want to switch back to the default database, just enter `select 0` in the command line interface..
+Redis propose le même concept de base de données qui vous est familier. Une base de données contient un ensemble de données. Le cas d'utilisation typique d'une base de données est de regrouper l'ensemble des données propre à une application et de les cloisonner vis à vis des autres applications.
 
-## Commands, Keys and Values
+Dans Redis, les bases de données sont simplement identifiés par un numéro, la base de données par défaut étant `0`. Si vous souhaitez utiliser une base différente, vous pouvez le faire via la commande `select`. Dans l'interface en ligne de commande, tapez `select 1`. Redis devrait vous renvoyer un message `OK` et votre invite de commande devrait changer en quelque chose ressemblant à `redis 127.0.0.1:6379[1]>`.Si vous souhaitez revenir à la base par défaut, tapez tout simplement dans l'invite `select 0`...
 
-While Redis is more than just a key-value store, at its core, every one of Redis' five data structures has at least a key and a value. It's imperative that we understand keys and values before moving on to other available pieces of information.
+## Commandes, Clés et Valeurs
 
-Keys are how you identify pieces of data. We'll be dealing with keys a lot, but for now, it's good enough to know that a key might look like `users:leto`. One could reasonably expect such a key to contain information about a user named `leto`. The colon doesn't have any special meaning, as far as Redis is concerned, but using a separator is a common approach people use to organize their keys.
+Bien que Redis soit plus qu'une base clé/valeur, chacune des cinq structures de données de Redis possède au moins une clé et une valeur. Il est impératif de comprendre les clés et les valeurs avant de passer à autre chose.
 
-Values represent the actual data associated with the key. They can be anything. Sometimes you'll store strings, sometimes integers, sometimes you'll store serialized objects (in JSON, XML or some other format). For the most part, Redis treats values as a byte array and doesn't care what they are. Note that different drivers handle serialization differently (some leave it up to you) so in this book we'll only talk about string, integer and JSON.
+Les clés sont le mécanisme permettant d'identifier une données. Nous manipulerons beaucoup les clés par la suite, mais il est déjà bon de savoir qu'une clé ressemblera à `users:leto`. On peut également s'attendre à ce qu'une telle clé pointer vers des informations à propos d'un utilisateur nommé `leto`. Les deux-points n'ont pas de signification particulière pour Redis, mais l'utilisation d'un séparateur est une pratique commune pour l'organisation des clés.
 
-Let's get our hands a little dirty. Enter the following command:
+Lesvaleurs représentent les données associées à une clé. Elles peuvent être de n'importe quel type. Parfois, vous y stockerez des chaines des caractères, parfois des entiers, parfois des objets sérialisés (en JSON, XML ou tout autre format). La plupart du temps, Redis traite les données comme étant un tableau d'octets et ne se préoccupe pas de leurs types. Notons que les différents pilotes gérent la sérialisation de manière différente (certains vous en laisse la gestion), donc nous nous limiterons uniquement aux chaines de caractères, entiers et JSON pour la suite.
+
+Mettons les mains à la pate. Tapez la commande suivante :
 
 	set users:leto "{name: leto, planet: dune, likes: [spice]}"
 
-This is the basic anatomy of a Redis command. First we have the actual command, in this case `set`. Next we have its parameters. The `set` command takes two parameters: the key we are setting and the value we are setting it to. Many, but not all, commands take a key (and when they do, it's often the first parameter). Can you guess how to retrieve this value? Hopefully you said (but don't worry if you weren't sure!):
+C'est la structure basique pour toute commande Redis. D'abord, nous avons la commande, ici `set`. Ensuite, nous avons les paramètres associés. La commande `set`  prends deux paramètres : la clé que nous avons définie et la valeur que nous lui affectons. La majorité des commandes prennent en paramètre une clé (et quand c'est le cas, c'est souvent le premier paramètre). Pouvez-vous deviner comment récupérer cette valeur ? Il est probable que vous essayeriez(mais ne vous inquiétez-pas si vous n'étiez pas sûr !) :
 
 	get users:leto
 
-Go ahead and play with some other combinations. Keys and values are fundamental concepts, and the `get` and `set` commands are the simplest way to play with them. Create more users, try different types of keys, try different values.
+Allez-y et testez d'autres combinaisons. Les clés et les valeurs sont les concepts fondamentaux, et les commandes `get` et `set` sont les outils de base pour les manipuler. Créez plus d'utilisateurs, essayez d'autres types de clés et des valeurs différentes.
 
-## Querying
+## Requêtes
 
-As we move forward, two things will become clear. As far as Redis is concerned, keys are everything and values are nothing. Or, put another way, Redis doesn't allow you to query an object's values. Given the above, we can't find the user(s) which live on planet `dune`.
+Au fur et à mesure, que nous avancerons, deux choses deviendront claires. Du point de vue de Redis, les clés sont tout et les valeurs rien. Autrement dit, Redis ne vous permets pas de faire des requêtes à propos des valeurs d'un objet. Dans l'exemple précédent, nous ne pouvons pas retrouver le(s) utilisateur(s) habitant la planète `dune`.
 
-For many, this is will cause some concern. We've lived in a world where data querying is so flexible and powerful that Redis' approach seems primitive and unpragmatic. Don't let it unsettle you too much. Remember, Redis isn't a one-size-fits-all solution. There'll be things that just don't belong in there (because of the querying limitations). Also, consider that in some cases you'll find new ways to model your data.
+Pour beaucoup, c'est un point critique. Nous vivons dans un monde où les requêtes sont tellement puissantes et flexibles que l'approche prônée par Redis semble primitive et abbérente. Ne vous laissez pas perturber par ceci. Rappelez-vous que Redis n'est pas une solution universelle à tout vos problèmes. Il y aura des problèmes que vous ne pourrez pas résoudre avec Redis (entre autre à cause des requêtes limitées). Mais considérez que vous trouverez d'autres façons de modéliser vos données.
 
-We'll look at more concrete examples as we move on, but it's important that we understand this basic reality of Redis. It helps us understand why values can be anything - Redis never needs to read or understand them. Also, it helps us get our minds thinking about modeling in this new world.
+Nous verrons quelques exemples concrets au fur et à mesure que nous avancerons, mais il est essentiel de comprendre cet aspect bien réel de Redis. Cela nous aide à comprendre pourquoi les valeurs stockées peuvent être de tout type - Redis n'ayant jamais besoin de les lire ou de les traityer. Cela nous aide aussi à modéliser nos données dans cette perspective.
 
-## Memory and Persistence
 
-We mentioned before that Redis is an in-memory persistent store. With respect to persistence, by default, Redis snapshots the database to disk based on how many keys have changed. You configure it so that if X number of keys change, then save the database every Y seconds. By default, Redis will save the database every 60 seconds if 1000 or more keys have changed all the way to 15 minutes if 9 or less keys has changed.
+## Mémoire et persistence
 
-Alternatively (or in addition to snapshotting), Redis can run in append mode. Any time a key changes, an append-only file is updated on disk. In some cases it's acceptable to lose 60 seconds worth of data, in exchange for performance, should there be some hardware or software failure. In some cases such a loss is not acceptable. Redis gives you the option. In chapter 6 we'll see a third option, which is offloading persistence to a slave.
+Nous avons donc mentionné auparavant que Redis est une base en mémoire persistente. Par rapport à la persistence, par défaut, Redis réalise des clichés de la base sur disque en fonction du nombre de clés modifiées. Vous pouvez configurer que toutes les X clés modifiées, la base soit sauvegardée tout les Y secondes. Par défaut, Redis sauvegarde la base toutes les 60 secondes si 1000 ou plus clés ont été modifiés ou toutes les 15 minutes si 9 ou moins ont été modifiées.
 
-With respect to memory, Redis keeps all your data in memory. The obvious implication of this is the cost of running Redis: RAM is still the most expensive part of server hardware.
+En alternative (ou en complément), Redis peut fonctionner en mode ajout. À chaque modification de clé, un fichier en ajout est mis à jour sur le disque. Dans certains cas, il est acceptable de perdre 60 secondes de données, en contrepartie de meilleures performances dans le cas d'une panne matérielle ou logicielle. Dans certains cas, la perte des données est préjudiciable. Redis vous donne ce choix. Dans le chapitre 6, nous verrons qu'il existe une troisième option qui est de déléguer la persistence à un esclave.
 
-I do feel that some developers have lost touch with how little space data can take. The Complete Works of William Shakespeare takes roughly 5.5MB of storage. As for scaling, other solutions tend to be IO- or CPU-bound. Which limitation (RAM or IO) will require you to scale out to more machines really depends on the type of data and how you are storing and querying it. Unless you're storing large multimedia files in Redis, the in-memory aspect is probably a non-issue. For apps where it is an issue you'll likely be trading being IO-bound for being memory bound.
+Vis à vis de la mémoire, Redis conserve toutes vos données en mémoire. La conséquence évidente de ceci est que la RAM est le premier facteur de coût matériel pour un serveur Redis.
 
-Redis did add support for virtual memory. However, this feature has been seen as a failure (by Redis' own developers) and its use has been deprecated.
+J'ai l'impression que certains développeurs n'ont plus en tête le peu d'espace que les données peuvent occuper. Les oeuvres complètes de William Shakespeare prennent à peu près 5.5 Mo. Pour le passage à l'échelle, les autres solutions tendent à être limités par les I/O ou la CPU. Limitation (RAM ou I/O) qui exigeront de vous de passer à l'échellle sur plusieurs machines en fonction des données que vous devrez stocker et traiter. À moins que vous stockiez des fichiers multimédias très large, le stockage des données en mémoire n'est pas un problème. Pour les applications où cela peut poser problèmes, vous devrez certainement faire un compromis pour être limité par les I/O au lieu de la mémoire.
 
-(On a side note, that 5.5MB file of Shakespeare's complete works can be compressed down to roughly 2MB. Redis doesn't do auto-compression but, since it treats values as bytes, there's no reason you can't trade processing time for RAM by compressing/decompressing the data yourself.)
+Par ailleurs, Redis gère également la mémoire virtuelle. Néanmoins, cette fonctionnalité a été considéré comme un échec (par les propres développeurs de Redis) et a été dépréciée.
 
-## Putting It Together
+(Notons que le fichier de 5.5Mo contenant les oeuvres complètes de Shakespeare peuvent être compressé à environ 2Mo. Redis ne compresse pas automatiquement les données, mais comme il gére des tableaux d'octets, rien ne vous empêche de le faire vous-même.)
 
-We've touched on a number of high level topics. The last thing I want to do before diving into Redis is bring some of those topics together. Specifically, query limitations, data structures and Redis' way to store data in memory.
 
-When you add those three things together you end up with something wonderful: speed. Some people think "Of course Redis is fast, everything's in memory." But that's only part of it. The real reason Redis shines versus other solutions is its specialized data structures.
+## Récapitulons
 
-How fast? It depends on a lot of things - which commands you are using, the type of data, and so on. But Redis' performance tends to be measured in tens of thousands, or hundreds of thousands of operations **per second**. You can run `redis-benchmark` (which is in the same folder as the `redis-server` and `redis-cli`) to test it out yourself.
+Nous avons abordés un certain nombre de sujets. La dernière chose que j'aimerais avant d'entrer dans les détails est de récapituler tout ces sujets. Plus précisement, les limitations des requêtes, les structures de données et la manière dont Redis stocke les données en mémoire.
 
-I once changed code which used a traditional model to using Redis. A load test I wrote took over 5 minutes to finish using the relational model. It took about 150ms to complete in Redis. You won't always get that sort of massive gain, but it hopefully gives you an idea of what we are talking about.
+Quand vous mettez ces trois points ensemble, vous obtenez quelque chose de fantastique : la rapidité. Certains penseront "Bien évidemment, Redis est rapide car tout est en mémoire." Mais c'est qu'une partie de l'explication. La véritable raison pour laquelle Redis surpasse les autres solutions sont ses structures de données spécialisées.
 
-It's important to understand this aspect of Redis because it impacts how you interact with it. Developers with an SQL background often work at minimizing the number of round trips they make to the database. That's good advice for any system, including Redis. However, given that we are dealing with simpler data structures, we'll sometimes need to hit the Redis server multiple times to achieve our goal. Such data access patterns can feel unnatural at first, but in reality it tends to be an insignificant cost compared to the raw performance we gain.
+Comment plus rapide ? Cela dépends d'un grand nombre de facteurs - quels sont les commandes utilisées, le type des données, etc. Mais les performances de Redis sont de l'ordre de plusieurs dizaines de milliers ou centaines de milliers d'opérations **par seconde**. Vous pouvez lancer `redis-benchmark` (qui est dans le même répertoire que `redis-server` et `redis-cli`) pour vous en rendre compte.
 
-## In This Chapter
+J'ai eu l'occasion de porter un code utilisant un modèle traditionnel à Redis. Un test de chargement que j'avais écrit prenait près de 5 minutes à s'exécuter en utilisant le modèle relationnel. Il a fallu 150ms avec Redis. Vous n'aurez pas toujours un gain aussi massif, mais cela devrait vous donnez une idée de ce dont on parle.
 
-Although we barely got to play with Redis, we did cover a wide range of topics. Don't worry if something isn't crystal clear - like querying. In the next chapter we'll go hands-on and any questions you have will hopefully answer themselves.
+Il est essentiel de comprendre cet aspect de Redis parce qu'il impacte votre façon d'interagir avec. Les développeurs avec une expérience SQL ont souvent tendance à minimiser les interrogations à la base de données. C'est une bonne pratique avec n'importe quelle solution, Redis inclus. Cependant, étant donné que nous gérons des structures de données plus simples, nous devons parfois interroger le serveur Redis à plusieurs reprises pour arriver à nos fins. Ces manières d'accèder aux données peuvent sembler peu naturelles au départ, mais elles ont un coût négligeable par rapport aux gains en performances brutes obtenus.
 
-The important takeaways from this chapter are:
+## Dans ce chapitre
 
-* Keys are strings which identify pieces of data (values)
+Bien que nous avons à peine eu l'occasion de jouer avec Redis, nous avons déjà couvert un champs très large de sujets. Ne vous inquiétez pas si certains points restent confus - comme les requêtes. Nous irons droit au but lors du chapitre suivant et la plupart de vos questions y trouveront j'espère une réponse.
 
-* Values are arbitrary byte arrays that Redis doesn't care about
+Les point principaux abordés dans ce chapitre sont :
 
-* Redis exposes (and is implemented as) five specialized data structures
+* Les clés sont des chaines de caractères identifiant des données (valeurs)
 
-* Combined, the above make Redis fast and easy to use, but not suitable for every scenario
+* Les valeurs sont des tableaux d'octets qui ne sont pas traités par Redis
+
+* Redis expose (et utilise en interne) uniquement cinq structures de données
+
+* Ensemble, tout les points ci-dessus font de Redis une base rapide et simple d'utilisation mais pas adaptée à tout les scénarios
 
 # Chapter 2 - The Data Structures
 
