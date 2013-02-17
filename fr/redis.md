@@ -1,31 +1,49 @@
-# About This Book
+# À propos de ce livre
 
-## License
+## Licence
 
-The Little Redis Book is licensed under the Attribution-NonCommercial 3.0 Unported license. You should not have paid for this book.
+Le petit livre sur Redis est fourni sous la licence Attribution-NonCommercial 3.0 Unported. Vous ne devriez pas avoir payé pour l'obtenir.
 
-You are free to copy, distribute, modify or display the book. However, I ask that you always attribute the book to me, Karl Seguin, and do not use it for commercial purposes.
+Vous êtes libres de copier, distribuer, modifier ou afficher ce livre. Cependant, je demande à ce que vous attribuiez toujours ce livre à mon, Karl Seguin, et que vous ne l'utilisiez pas dans un but commercial. 
 
-You can see the *full text* of **the license at**:
+Vous pouvez accéder au *texte complet* de **la licence à l'adresse**: 
 
 <http://creativecommons.org/licenses/by-nc/3.0/legalcode>
 
-## About The Author
+## À propos de l'auteur
 
-Karl Seguin is a developer with experience across various fields and technologies. He's an active contributor to Open-Source Software projects, a technical writer and an occasional speaker. He's written various articles, as well as a few tools, about Redis. Redis powers the ranking and statistics of his free service for casual game developers: [mogade.com](http://mogade.com/).
+Karl Seguin est un développeur avec de l'expériences dans différents domaines et technologies. Il est un contributeur actifs dans de nombreux projets Open-Source, un écrivain technique et un speaker de manière occasionnelle. Il a écrit de nombreux articles, ainsi que certains outils en lien avec Redis. Redis propulse son service gratuit de classement et de statistique pour les développeurs occasionnels de jeux : [mogade.com](http://mogade.com/).
 
-Karl wrote [The Little MongoDB Book](http://openmymind.net/2011/3/28/The-Little-MongoDB-Book/), the free and popular book about MongoDB.
+Karl a écrit [The Little MongoDB Book](http://openmymind.net/2011/3/28/The-Little-MongoDB-Book/), le livre gratuit et populaire à propos de MongoDB.
 
-His blog can be found at <http://openmymind.net> and he tweets via [@karlseguin](http://twitter.com/karlseguin)
+Son blog peut-être trouvé à l'adresse : <http://openmymind.net> et il tweete sur le compte : [@karlseguin](http://twitter.com/karlseguin)
 
-## With Thanks To
+## Traduction
 
-A special thanks to [Perry Neal](https://twitter.com/perryneal) for lending me his eyes, mind and passion. You provided me with invaluable help. Thank you.
+La traduction a été réalisée par trois personnes : [David Loureiro](http://twitter.com/DavidLoureiroFr), [Haikel Guémar](http://twitter.com/hguemar) et [Augustin Ragon](http://twitter.com/augustin82).
 
-## Latest Version
+### David Loureiro
 
-The latest source of this book is available at:
-<http://github.com/karlseguin/the-little-redis-book>
+David Loureiro, après des études en mathématiques appliquées et ensuite de management a créé la société SysFera avec [Eddy Caron](http://twitter.com/CaronEddy) et [Frédéric Desprez](http://twitter.com/desprez64).
+SysFera est une société d'édition de logiciels avec une expertise forte dans la mise en place de solutions Open-Source pour la gestion et l'exploitation as a Service d'applications et d'infrastructures.
+Président de SysFera, le champ d'expertise de David Loureiro couvre les domaines du Cloud Computing, de l'Open-Source, du HPC, et du SaaS, entre autres.
+
+### Haikel Guémar
+
+TODO
+
+### Augustin Ragon
+
+TODO
+
+## Remerciements
+
+Un remerciement tout particulier à [Perry Neal](https://twitter.com/perryneal) pour m'avoir loué ses yeux, son esprit et sa passion. Tu m'as fourni une aide inestimable. Merci à toi.
+
+## Dernière version
+
+La dernière version des sources du livre original se trouve à l'adresse suivante : <http://github.com/karlseguin/the-little-redis-book>
+Vous pourrez trouver la dernière version des sources de la traduction française à l'adresse suivante : <http://github.com/dloureiro/the-little-redis-book> 
 
 # Introduction
 
