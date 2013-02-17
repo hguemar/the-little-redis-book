@@ -1,2 +1,2 @@
-% The Little Redis Book
+% Le petit livre sur Redis
 % Karl Seguin
