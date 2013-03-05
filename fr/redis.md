@@ -186,15 +186,15 @@ Les point principaux abordés dans ce chapitre sont :
 
 * Ensemble, tout les points ci-dessus font de Redis une base rapide et simple d'utilisation mais pas adaptée à tout les scénarios
 
-# Chapter 2 - The Data Structures
+# Chaptre 2 - Les Structures de Données 
 
-It's time to look at Redis' five data structures. We'll explain what each data structure is, what methods are available and what type of feature/data you'd use it for.
+Il est temps jeter un coup d'oeil aux cinq structures de données de Redis. Nous allons expliquer ce qu'est chaque structure de données, quelles sont les méthodes disponibles et pour quel type de fonctionnalité ou de donnée vous allez les utiliser.
 
-The only Redis constructs we've seen so far are commands, keys and values. So far, nothing about data structures has been concrete. When we used the `set` command, how did Redis know what data structure to use? It turns out that every command is specific to a data structure. For example when you use `set` you are storing the value in a string data structure. When you use `hset` you are storing it in a hash. Given the small size of Redis' vocabulary, it's quite manageable.
+Les seules construction du langage que nous avons vu jusque là sont les commandes, les clés et les valeurs. Jusqu'ici rien de concret à propos des structures de données. Quand nous utilisons la commande `set`, comment Redis peut-il savoir quelle structure de données utiliser? Il s'avère que chaque commande est spécifique à une structure de données. Par exemple, quand vous utilisez `set`, vous êtes en train de stocker une valeur dans une structure de données de type string. Quand vous utilisez `hset`, vous êtes en train de stocker un hash. Compte tenu de la taille restreinte du vocabulaire de Redis, cela devrait être gérable.
 
-**[Redis' website](http://redis.io/commands) has great reference documentation. There's no point in repeating the work they've already done. We'll only cover the most important commands needed to understand the purpose of a data structure.**
+**[Le site web de Redis](http://redis.io/commands) a une très bonne documentation de référence. Il n'est pas ici question de répéter le travail qu'ils ont déjà réalisé. Nous allons seulement couvrir les commandes les plus importantes nécessaires pour la compréhension des différentes structures de données.**
 
-There's nothing more important than having fun and trying things out. You can always erase all the values in your database by entering `flushdb`, so don't be shy and try doing crazy things!
+Il n'y a rien de plus important que de prendre du plaisir en essayant de tester les concepts. Vous pouvez toujours supprimer toutes les données de votre base de données en entrant `flushdb`, alors ne soyez pas timide et essayer de tenter des choses un peu folles!
 
 ## Strings
 
