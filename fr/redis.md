@@ -345,7 +345,7 @@ Il n'y a rien de plus important que de prendre du plaisir en essayant de tester 
 supprimer toutes les données de votre base de données en entrant `flushdb`, alors ne soyez pas timide et essayer de
 tenter des choses un peu folles!
 
-## Strings
+## Les Strings
 
 Les Strings sont les structures de données disponibles dans Redis les plus basiques., Quand nous pensez à une paire
 clée-valeur, vous pensez à des strings. Ne soyez pas perplexe par rapport au nom, comme toujours, votre valeur peut
@@ -407,7 +407,7 @@ ceux qui ont été donnés plus haut : stockage d'objets (complexes ou non) et c
 comme il est très rapide de récupérer des valeurs grâce à leurs clés, les strings sont souvent utilisées pour cacher
 des données.
 
-## Hashes
+## Les Hashs
 
 Hashes are a good example of why calling Redis a key-value store isn't quite accurate. You see, in a lot of ways, hashes
  are like strings. The important difference is that they provide an extra level of indirection: a field. Therefore, the
