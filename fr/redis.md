@@ -2,9 +2,11 @@
 
 ## Licence
 
-Le petit livre sur Redis est fourni sous la licence Attribution-NonCommercial 3.0 Unported. Vous ne devriez pas avoir payé pour l'obtenir.
+Le petit livre sur Redis est fourni sous la licence Attribution-NonCommercial 3.0 Unported. Vous ne devriez pas avoir
+payé pour l'obtenir.
 
-Vous êtes libres de copier, distribuer, modifier ou afficher ce livre. Cependant, je demande à ce que vous attribuiez toujours ce livre à mon, Karl Seguin, et que vous ne l'utilisiez pas dans un but commercial. 
+Vous êtes libres de copier, distribuer, modifier ou afficher ce livre. Cependant, je demande à ce que vous attribuiez
+toujours ce livre à mon, Karl Seguin, et que vous ne l'utilisiez pas dans un but commercial.
 
 Vous pouvez accéder au *texte complet* de **la licence à l'adresse**: 
 
@@ -12,21 +14,30 @@ Vous pouvez accéder au *texte complet* de **la licence à l'adresse**:
 
 ## À propos de l'auteur
 
-Karl Seguin est un développeur avec de l'expériences dans différents domaines et technologies. Il est un contributeur actifs dans de nombreux projets Open-Source, un écrivain technique et un speaker de manière occasionnelle. Il a écrit de nombreux articles, ainsi que certains outils en lien avec Redis. Redis propulse son service gratuit de classement et de statistique pour les développeurs occasionnels de jeux : [mogade.com](http://mogade.com/).
+Karl Seguin est un développeur avec de l'expériences dans différents domaines et technologies. Il est un contributeur
+actifs dans de nombreux projets Open-Source, un écrivain technique et un speaker de manière occasionnelle. Il a écrit de
+nombreux articles, ainsi que certains outils en lien avec Redis. Redis propulse son service gratuit de classement et de
+statistique pour les développeurs occasionnels de jeux : [mogade.com](http://mogade.com/).
 
-Karl a écrit [The Little MongoDB Book](http://openmymind.net/2011/3/28/The-Little-MongoDB-Book/), le livre gratuit et populaire à propos de MongoDB.
+Karl a écrit [The Little MongoDB Book](http://openmymind.net/2011/3/28/The-Little-MongoDB-Book/), le livre gratuit et
+populaire à propos de MongoDB.
 
-Son blog peut-être trouvé à l'adresse : <http://openmymind.net> et il tweete sur le compte : [@karlseguin](http://twitter.com/karlseguin)
+Son blog peut-être trouvé à l'adresse : <http://openmymind.net> et il tweete sur le compte :
+[@karlseguin](http://twitter.com/karlseguin)
 
 ## Traduction
 
-La traduction a été réalisée par trois personnes : [David Loureiro](http://twitter.com/DavidLoureiroFr), [Haikel Guémar](http://twitter.com/hguemar) et [Augustin Ragon](http://twitter.com/augustin82).
+La traduction a été réalisée par trois personnes : [David Loureiro](http://twitter.com/DavidLoureiroFr),
+[Haikel Guémar](http://twitter.com/hguemar) et [Augustin Ragon](http://twitter.com/augustin82).
 
 ### David Loureiro
 
-David Loureiro, après des études en mathématiques appliquées et ensuite de management a créé la société SysFera avec [Eddy Caron](http://twitter.com/CaronEddy) et [Frédéric Desprez](http://twitter.com/desprez64).
-SysFera est une société d'édition de logiciels avec une expertise forte dans la mise en place de solutions Open-Source pour la gestion et l'exploitation as a Service d'applications et d'infrastructures.
-Président de SysFera, le champ d'expertise de David Loureiro couvre les domaines du Cloud Computing, de l'Open-Source, du HPC, et du SaaS, entre autres.
+David Loureiro, après des études en mathématiques appliquées et ensuite de management a créé la société SysFera avec
+[Eddy Caron](http://twitter.com/CaronEddy) et [Frédéric Desprez](http://twitter.com/desprez64).
+SysFera est une société d'édition de logiciels avec une expertise forte dans la mise en place de solutions Open-Source
+pour la gestion et l'exploitation as a Service d'applications et d'infrastructures.
+Président de SysFera, le champ d'expertise de David Loureiro couvre les domaines du Cloud Computing, de l'Open-Source,
+du HPC, et du SaaS, entre autres.
 
 ### Haikel Guémar
 
@@ -38,143 +49,269 @@ TODO
 
 ## Remerciements
 
-Un remerciement tout particulier à [Perry Neal](https://twitter.com/perryneal) pour m'avoir loué ses yeux, son esprit et sa passion. Tu m'as fourni une aide inestimable. Merci à toi.
+Un remerciement tout particulier à [Perry Neal](https://twitter.com/perryneal) pour m'avoir loué ses yeux, son esprit
+et sa passion. Tu m'as fourni une aide inestimable. Merci à toi.
 
 ## Dernière version
 
-La dernière version des sources du livre original se trouve à l'adresse suivante : <http://github.com/karlseguin/the-little-redis-book>
-Vous pourrez trouver la dernière version des sources de la traduction française à l'adresse suivante : <http://github.com/dloureiro/the-little-redis-book> 
+La dernière version des sources du livre original se trouve à l'adresse suivante :
+<http://github.com/karlseguin/the-little-redis-book>
+Vous pourrez trouver la dernière version des sources de la traduction française à l'adresse suivante :
+<http://github.com/dloureiro/the-little-redis-book>
 
 # Introduction
 
-Au cours de ces deux dernières années, les outils et technologies utilisés pour le requêtage et la persistence des données ont évolué à un rythme effréné. Bien qu'il soit certain que les bases de données relationnelles ne disparaitront pas, on peut également affirmer que l'écosystème de la gestion de données ne sera plus jamais le même.
+Au cours de ces deux dernières années, les outils et technologies utilisés pour le requêtage et la persistence des
+données ont évolué à un rythme effréné. Bien qu'il soit certain que les bases de données relationnelles ne disparaitront
+pas, on peut également affirmer que l'écosystème de la gestion de données ne sera plus jamais le même.
 
-Pour ma part, de toutes les solutions et outils qui ont émergés, Redis est de loin, le plus intéressant. Pourquoi ? Premièrement, parce qu'il est extrêmement simple d'apprentissage. Être à l'aise avec Redis est une question d'heures. Deuxièment, il réponds à un ensemble spécifiques de cas d'utilisation tout en restant générique. Où veut-on en venir ? Redis n'essaie pas d'être une solution fourre-tout pour tout type de données. Au fur et à mesure que vous prenez en main Redis, il devient de plus en plus évident de distinguer ce qu'il peut faire ou non. Et quand il peut, il se révèle d'une grande aide pour le développeur.
+Pour ma part, de toutes les solutions et outils qui ont émergés, Redis est de loin, le plus intéressant. Pourquoi ?
+Premièrement, parce qu'il est extrêmement simple d'apprentissage. Être à l'aise avec Redis est une question d'heures.
+Deuxièment, il réponds à un ensemble spécifiques de cas d'utilisation tout en restant générique. Où veut-on en venir ?
+Redis n'essaie pas d'être une solution fourre-tout pour tout type de données. Au fur et à mesure que vous prenez en main
+Redis, il devient de plus en plus évident de distinguer ce qu'il peut faire ou non. Et quand il peut, il se révèle d'une
+grande aide pour le développeur.
 
-Bien que vous pouvez construire un système complet à l'aide de Redis uniquement, je pense que la plupart des utilisateurs trouveront qu'il complémente assez bien leur système de gestion de données plus génériques - que ce soit une base de données relationnelle classique, une base orienté documents ou autre. C'est le genre de solution que vous utiliserez pour mettre en oeuvre des fonctionnalités particulières. Dans un sens, il est similaire à un moteur d'indexation. Vous ne construirez pas votre application toute entière autour de Lucence. Mais quand vous avez besoin d'un moteur de recherche robuste, vous profiterez d'une bien meilleur expérience - que ce soit pour vous et vos utilisateurs. Bien entendu, les similitudes entre Redis et les moteurs d'indexation s'arrêtent là.
+Bien que vous pouvez construire un système complet à l'aide de Redis uniquement, je pense que la plupart des
+utilisateurs trouveront qu'il complémente assez bien leur système de gestion de données plus génériques - que ce soit
+une base de données relationnelle classique, une base orienté documents ou autre. C'est le genre de solution que vous
+utiliserez pour mettre en oeuvre des fonctionnalités particulières. Dans un sens, il est similaire à un moteur
+d'indexation. Vous ne construirez pas votre application toute entière autour de Lucence. Mais quand vous avez besoin
+d'un moteur de recherche robuste, vous profiterez d'une bien meilleur expérience - que ce soit pour vous et vos
+utilisateurs. Bien entendu, les similitudes entre Redis et les moteurs d'indexation s'arrêtent là.
 
-L'objectif de ce bouquin est de mettre en place les bases nécessaires pour que vous puissez maitriser Redis. Nous nous concentrons sur l'apprentissage des cinq structures de données de Redis et étudierons les différentes approches de modélisation des données. Nous toucherons également quelques mots à propos de l'administration et des techniques de débogage.
+L'objectif de ce bouquin est de mettre en place les bases nécessaires pour que vous puissez maitriser Redis. Nous nous
+concentrons sur l'apprentissage des cinq structures de données de Redis et étudierons les différentes approches de
+modélisation des données. Nous toucherons également quelques mots à propos de l'administration et des techniques de
+débogage.
 
 
 # Mise en route
 
-Nous apprenons tous différemment: certains aiment mettre les mains dans le cambouis, d'uatres aiment regarder des vidéos, et certains autres aiment lire. Rien ne vous aidera mieux à comprendre Redis qu'expérimenter par vous même. Redis est facile à installer et est livré avec un simple shell qui vous donnera tout ce dont nous avons besoin. Prenons un peu de temps pour l'installer et le faire fonctionner sur notre ordinateur. 
+Nous apprenons tous différemment: certains aiment mettre les mains dans le cambouis, d'uatres aiment regarder des
+vidéos, et certains autres aiment lire. Rien ne vous aidera mieux à comprendre Redis qu'expérimenter par vous même.
+Redis est facile à installer et est livré avec un simple shell qui vous donnera tout ce dont nous avons besoin. Prenons
+un peu de temps pour l'installer et le faire fonctionner sur notre ordinateur.
 
 ## Sur Windows
 
-Redis lui-même n'est pas officiellement supporté sur Windows, mais il y a cependant certaines options possibles. Vous ne devriez pas les faire tourner en production, mais je n'ai jamais perçu de limitation pendant le développement.
+Redis lui-même n'est pas officiellement supporté sur Windows, mais il y a cependant certaines options possibles. Vous ne
+devriez pas les faire tourner en production, mais je n'ai jamais perçu de limitation pendant le développement.
 
-Un port par Microsoft Open Technologies, Inc. peut être trouvé à l'adresse suivante : <https://github.com/MSOpenTech/redis>. Au moment de l'écriture de ce livre, cette solution n'est pas prête pour être utilisée sur des systèmes en production.
+Un port par Microsoft Open Technologies, Inc. peut être trouvé à l'adresse suivante :
+<https://github.com/MSOpenTech/redis>. Au moment de l'écriture de ce livre, cette solution n'est pas prête pour être
+utilisée sur des systèmes en production.
 
-Une autre solution, disponible depuis un certain temps, peut être trouvée à l'adresse suivante : <https://github.com/dmajkic/redis/downloads>. Vous pouvez télécharger la version la plus à jour (qui devrait être en haut de la liste). Extrayés le fichier zip et, en fonction de votre architecture, ouvrez le répertoire `64bit` ou `32bit`.
+Une autre solution, disponible depuis un certain temps, peut être trouvée à l'adresse suivante :
+<https://github.com/dmajkic/redis/downloads>. Vous pouvez télécharger la version la plus à jour (qui devrait être en
+haut de la liste). Extrayés le fichier zip et, en fonction de votre architecture, ouvrez le répertoire `64bit` ou
+`32bit`.
 
 ## Sur *nix ou MacOSX
 
-Pour les utilisateurs d'*nix ou de Mac, compiler et générer Redis depuis les sources est la meilleure option. Les instructions, ainsi que la dernière version, sont disponibles à l'adresse suivante : <http://redis.io/download>. Au moment de l'écriture de ce livre, la dernière version est la 2.6.2; pour installer cette version, vous devez exécuter: 
+Pour les utilisateurs d'*nix ou de Mac, compiler et générer Redis depuis les sources est la meilleure option. Les
+instructions, ainsi que la dernière version, sont disponibles à l'adresse suivante : <http://redis.io/download>. Au
+moment de l'écriture de ce livre, la dernière version est la 2.6.2; pour installer cette version, vous devez exécuter:
 
 	wget http://redis.googlecode.com/files/redis-2.6.2.tar.gz
 	tar xzf redis-2.6.2.tar.gz
 	cd redis-2.6.2
 	make
 
-(De manière alternative, Redis est disponible à travers différents gestionnaires de paquets. Par exemple, les utilisateurs de MacOSX disposant de Homebrew peut simplement taper `brew install redis`.)
+(De manière alternative, Redis est disponible à travers différents gestionnaires de paquets. Par exemple, les
+utilisateurs de MacOSX disposant de Homebrew peut simplement taper `brew install redis`.)
 
-Si vous compilez et générez Redis depuis les sources, les binaires produits seront placés dans le répertoire `src`. Naviguez jusqu'au répertoire `src` en tapant `cd src`.
+Si vous compilez et générez Redis depuis les sources, les binaires produits seront placés dans le répertoire `src`.
+Naviguez jusqu'au répertoire `src` en tapant `cd src`.
 
 ## Lancer et se connecter à Redis
 
-Si tout a fonctionné, les binaires de Redis devraient être à votre disposition. Redis possède un grand nombre d'exécutables. Nous allons nous concentrer sur le serveur Redis et sur la ligne de commande Redis (un client DOS-like). Démarrons le serveur. Sous Windows, double-cliquez sur `redis-server`. Sous *nix/MacOSX lancez `./redis-server`.
+Si tout a fonctionné, les binaires de Redis devraient être à votre disposition. Redis possède un grand nombre
+d'exécutables. Nous allons nous concentrer sur le serveur Redis et sur la ligne de commande Redis (un client DOS-like).
+Démarrons le serveur. Sous Windows, double-cliquez sur `redis-server`. Sous *nix/MacOSX lancez `./redis-server`.
 
-Si vous lisez le message de démarrage, vous devriez vour un avertissement indiquant que le fichier `redis.conf` ne peut pas être trouvé. Redis va utiliser les paramètres par défaut en lieu et place, ce qui est correct pour ce que nous allons faire.
+Si vous lisez le message de démarrage, vous devriez vour un avertissement indiquant que le fichier `redis.conf` ne peut
+pas être trouvé. Redis va utiliser les paramètres par défaut en lieu et place, ce qui est correct pour ce que nous
+allons faire.
 
-Ensuite, lancez la console Redis, soit en double-cliquant sur `redis-cli` (Windows), soit en lançant `./redis-cli` (*nix/MacOSX). Ceci va vous connecter au serveur tournant en local sur le port par défaut (6379).
+Ensuite, lancez la console Redis, soit en double-cliquant sur `redis-cli` (Windows), soit en lançant `./redis-cli`
+(*nix/MacOSX). Ceci va vous connecter au serveur tournant en local sur le port par défaut (6379).
 
-Vous pouvez tester que tout fonctionne en entrant `info` dans l'interface en ligne de commande. Vous devriez normalement voir un ensemble de paires clé-valeur fournissant un ensemble important d'éléments d'information sur le statut du serveur.
+Vous pouvez tester que tout fonctionne en entrant `info` dans l'interface en ligne de commande. Vous devriez normalement
+voir un ensemble de paires clé-valeur fournissant un ensemble important d'éléments d'information sur le statut du
+serveur.
 
-Si vous avez des problème avec la mise en place ci-dessus, je suggère que vous recherchiez de l'aide dans le groupe de support officiel de Redis : [official Redis support group](https://groups.google.com/forum/#!forum/redis-db).
+Si vous avez des problème avec la mise en place ci-dessus, je suggère que vous recherchiez de l'aide dans le groupe de
+support officiel de Redis : [official Redis support group](https://groups.google.com/forum/#!forum/redis-db).
 
 # Drivers Redis
 
-Comme vous allez très bientôt l'apprendre, l'API de Redis est mieux décrite par un ensemble de fonctions. Ceci amène un sentiment de simplicité et un aspect assez procédure quand on l'utilise. Ceci signifie notamment que, que vous utilisiez la ligne de commande, ou un driver pour votre langage préféré, les choses seront tout à fait similaires. C'est pourquoi vous ne devriez pas avoir de problèmes durant la lecture, si vous préférez utiliser un langage de programmation. Si vous le souhaitez, rendez vous sur la page des clients Redis [client page](http://redis.io/clients), et téléchargez ledriver approprié.
+Comme vous allez très bientôt l'apprendre, l'API de Redis est mieux décrite par un ensemble de fonctions. Ceci amène un
+sentiment de simplicité et un aspect assez procédure quand on l'utilise. Ceci signifie notamment que, que vous utilisiez
+la ligne de commande, ou un driver pour votre langage préféré, les choses seront tout à fait similaires. C'est pourquoi
+vous ne devriez pas avoir de problèmes durant la lecture, si vous préférez utiliser un langage de programmation. Si vous
+le souhaitez, rendez vous sur la page des clients Redis [client page](http://redis.io/clients),
+et téléchargez le driver approprié.
 
 # Chapitre 1 - Les bases
 
-Qu'est-ce qui rends Redis spécial ? Quelle classe de problèmes résout-il ? Quels sont les points d'achoppement que les développeurs doivent faire attention lorsqu'ils l'utilisent ? Avant de pouvoir répondre à toutes ces questions, nous devons comprendre ce qu'est Redis.
+Qu'est-ce qui rends Redis spécial ? Quelle classe de problèmes résout-il ? Quels sont les points d'achoppement que les
+développeurs doivent faire attention lorsqu'ils l'utilisent ? Avant de pouvoir répondre à toutes ces questions, nous
+devons comprendre ce qu'est Redis.
 
-Redis est souvent décrit comme un moteur de stockage clé/valeur en mémoire persistent. Je ne crois pas que ça soit une description exacte. En effet, Redis stocke toutes les données en mémoire (nous en saurons plus dans quelques instants), et il persiste bien les données sur disque, mais il est bien plus qu'un simple moteur de stockage clé/valeur. Il est essentiel de dépasser cette idée reçue sous peine de réduire votre perspective de Redis et des problèmes qu'il est capable de résoudre.
+Redis est souvent décrit comme un moteur de stockage clé/valeur en mémoire persistent. Je ne crois pas que ça soit une
+description exacte. En effet, Redis stocke toutes les données en mémoire (nous en saurons plus dans quelques instants),
+et il persiste bien les données sur disque, mais il est bien plus qu'un simple moteur de stockage clé/valeur. Il est
+essentiel de dépasser cette idée reçue sous peine de réduire votre perspective de Redis et des problèmes qu'il est
+capable de résoudre.
 
-En réalité, Redis expose cinq structures de données différentes, une seule d'entre elle peut être définie comme une structure clé/valeur traditionnelle. En comprenant ces cinq structures de données, leur fonctionnements, leurs interfaces et ce que vous pouvez modéliser avec, constitue la clé pour comprendre Redis. Mais commençons d'abord par nous pencher sur la signifaction de ce qu'est l'interface d'une structure de données.
+En réalité, Redis expose cinq structures de données différentes, une seule d'entre elle peut être définie comme une
+structure clé/valeur traditionnelle. En comprenant ces cinq structures de données, leur fonctionnements, leurs
+interfaces et ce que vous pouvez modéliser avec, constitue la clé pour comprendre Redis. Mais commençons d'abord par
+nous pencher sur la signifaction de ce qu'est l'interface d'une structure de données.
 
-Si nous devions appliquer ce concept de structure de données au monde relationnel, nous pourrions affirmer que les bases de données exposent une unique structure de données : les tables. Les tables sont à la fois complexe et flexible. Il n'y a pas grand-chose que l'on ne puisse modéliser, stocker ou manipuler avec les tables. Cependant, leur nature générique n'est pas sans inconvénients. Plus particulièrement, tout n'est pas aussi simple ou rapide, que ce que cela devrait être. Et si, plutôt que d'avoir une seule structure de données unique, nous utilisions des structures spécialisées ? Certes, il y aura des choses que l'on ne pourra pas faire (ou pas aisément du moins), mais ne gagnerions-nous pas en simplicité et rapidité ?
+Si nous devions appliquer ce concept de structure de données au monde relationnel, nous pourrions affirmer que les
+bases de données exposent une unique structure de données : les tables. Les tables sont à la fois complexe et flexible.
+Il n'y a pas grand-chose que l'on ne puisse modéliser, stocker ou manipuler avec les tables. Cependant, leur nature
+générique n'est pas sans inconvénients. Plus particulièrement, tout n'est pas aussi simple ou rapide, que ce que cela
+devrait être. Et si, plutôt que d'avoir une seule structure de données unique, nous utilisions des structures
+spécialisées ? Certes, il y aura des choses que l'on ne pourra pas faire (ou pas aisément du moins), mais ne
+gagnerions-nous pas en simplicité et rapidité ?
 
-Utiliser des structures de données spécifiques pour des problèmes spécifiques ? Mais n'est-ce pas notre façon d'agir lorsque nous codons ? Nous n'utilisons pas d'une table de hachage pour chaque donnée, ni n'utilisons une variable scalaire. C'est pour moi ce qui caractérise l'approche de Redis. Si vous devez gérer des scalaires, listes, listes de hachages ou ensembles, pourquoi ne pas les stocker en tant que scalaires, listes, listes de hachages ou ensembles ? Pourquoi vérifier l'existence d'une variable devrait être plus complexe que d'appeler `exists(key)` ou plus lent que 0(1) (recherche à temps constants qui ne ralentira pas quelque soit la quantité de données stockée) ?
+Utiliser des structures de données spécifiques pour des problèmes spécifiques ? Mais n'est-ce pas notre façon d'agir
+lorsque nous codons ? Nous n'utilisons pas d'une table de hachage pour chaque donnée, ni n'utilisons une variable
+scalaire. C'est pour moi ce qui caractérise l'approche de Redis. Si vous devez gérer des scalaires, listes, listes de
+hachages ou ensembles, pourquoi ne pas les stocker en tant que scalaires, listes, listes de hachages ou ensembles ?
+Pourquoi vérifier l'existence d'une variable devrait être plus complexe que d'appeler `exists(key)` ou plus lent que
+0(1) (recherche à temps constants qui ne ralentira pas quelque soit la quantité de données stockée) ?
 
 
 # Les briques de bases
 
 ## Bases de données
 
-Redis propose le même concept de base de données qui vous est familier. Une base de données contient un ensemble de données. Le cas d'utilisation typique d'une base de données est de regrouper l'ensemble des données propre à une application et de les cloisonner vis à vis des autres applications.
+Redis propose le même concept de base de données qui vous est familier. Une base de données contient un ensemble de
+données. Le cas d'utilisation typique d'une base de données est de regrouper l'ensemble des données propre à une
+application et de les cloisonner vis à vis des autres applications.
 
-Dans Redis, les bases de données sont simplement identifiés par un numéro, la base de données par défaut étant `0`. Si vous souhaitez utiliser une base différente, vous pouvez le faire via la commande `select`. Dans l'interface en ligne de commande, tapez `select 1`. Redis devrait vous renvoyer un message `OK` et votre invite de commande devrait changer en quelque chose ressemblant à `redis 127.0.0.1:6379[1]>`.Si vous souhaitez revenir à la base par défaut, tapez tout simplement dans l'invite `select 0`...
+Dans Redis, les bases de données sont simplement identifiés par un numéro, la base de données par défaut étant `0`. Si
+vous souhaitez utiliser une base différente, vous pouvez le faire via la commande `select`. Dans l'interface en ligne de
+commande, tapez `select 1`. Redis devrait vous renvoyer un message `OK` et votre invite de commande devrait changer en
+quelque chose ressemblant à `redis 127.0.0.1:6379[1]>`.Si vous souhaitez revenir à la base par défaut, tapez tout
+simplement dans l'invite `select 0`...
 
 ## Commandes, Clés et Valeurs
 
-Bien que Redis soit plus qu'une base clé/valeur, chacune des cinq structures de données de Redis possède au moins une clé et une valeur. Il est impératif de comprendre les clés et les valeurs avant de passer à autre chose.
+Bien que Redis soit plus qu'une base clé/valeur, chacune des cinq structures de données de Redis possède au moins une
+clé et une valeur. Il est impératif de comprendre les clés et les valeurs avant de passer à autre chose.
 
-Les clés sont le mécanisme permettant d'identifier une données. Nous manipulerons beaucoup les clés par la suite, mais il est déjà bon de savoir qu'une clé ressemblera à `users:leto`. On peut également s'attendre à ce qu'une telle clé pointer vers des informations à propos d'un utilisateur nommé `leto`. Les deux-points n'ont pas de signification particulière pour Redis, mais l'utilisation d'un séparateur est une pratique commune pour l'organisation des clés.
+Les clés sont le mécanisme permettant d'identifier une données. Nous manipulerons beaucoup les clés par la suite, mais
+il est déjà bon de savoir qu'une clé ressemblera à `users:leto`. On peut également s'attendre à ce qu'une telle clé
+pointer vers des informations à propos d'un utilisateur nommé `leto`. Les deux-points n'ont pas de signification
+particulière pour Redis, mais l'utilisation d'un séparateur est une pratique commune pour l'organisation des clés.
 
-Lesvaleurs représentent les données associées à une clé. Elles peuvent être de n'importe quel type. Parfois, vous y stockerez des chaines des caractères, parfois des entiers, parfois des objets sérialisés (en JSON, XML ou tout autre format). La plupart du temps, Redis traite les données comme étant un tableau d'octets et ne se préoccupe pas de leurs types. Notons que les différents pilotes gérent la sérialisation de manière différente (certains vous en laisse la gestion), donc nous nous limiterons uniquement aux chaines de caractères, entiers et JSON pour la suite.
+Lesvaleurs représentent les données associées à une clé. Elles peuvent être de n'importe quel type. Parfois, vous y
+stockerez des chaines des caractères, parfois des entiers, parfois des objets sérialisés (en JSON, XML ou tout autre
+format). La plupart du temps, Redis traite les données comme étant un tableau d'octets et ne se préoccupe pas de leurs
+types. Notons que les différents pilotes gérent la sérialisation de manière différente (certains vous en laisse la
+gestion), donc nous nous limiterons uniquement aux chaines de caractères, entiers et JSON pour la suite.
 
 Mettons les mains à la pate. Tapez la commande suivante :
 
 	set users:leto "{name: leto, planet: dune, likes: [spice]}"
 
-C'est la structure basique pour toute commande Redis. D'abord, nous avons la commande, ici `set`. Ensuite, nous avons les paramètres associés. La commande `set`  prends deux paramètres : la clé que nous avons définie et la valeur que nous lui affectons. La majorité des commandes prennent en paramètre une clé (et quand c'est le cas, c'est souvent le premier paramètre). Pouvez-vous deviner comment récupérer cette valeur ? Il est probable que vous essayeriez(mais ne vous inquiétez-pas si vous n'étiez pas sûr !) :
+C'est la structure basique pour toute commande Redis. D'abord, nous avons la commande, ici `set`. Ensuite, nous avons
+les paramètres associés. La commande `set`  prends deux paramètres : la clé que nous avons définie et la valeur que nous
+lui affectons. La majorité des commandes prennent en paramètre une clé (et quand c'est le cas, c'est souvent le premier
+paramètre). Pouvez-vous deviner comment récupérer cette valeur ? Il est probable que vous essayeriez(mais ne vous
+inquiétez-pas si vous n'étiez pas sûr !) :
 
 	get users:leto
 
-Allez-y et testez d'autres combinaisons. Les clés et les valeurs sont les concepts fondamentaux, et les commandes `get` et `set` sont les outils de base pour les manipuler. Créez plus d'utilisateurs, essayez d'autres types de clés et des valeurs différentes.
+Allez-y et testez d'autres combinaisons. Les clés et les valeurs sont les concepts fondamentaux, et les commandes `get`
+et `set` sont les outils de base pour les manipuler. Créez plus d'utilisateurs, essayez d'autres types de clés et des
+valeurs différentes.
 
 ## Requêtes
 
-Au fur et à mesure, que nous avancerons, deux choses deviendront claires. Du point de vue de Redis, les clés sont tout et les valeurs rien. Autrement dit, Redis ne vous permets pas de faire des requêtes à propos des valeurs d'un objet. Dans l'exemple précédent, nous ne pouvons pas retrouver le(s) utilisateur(s) habitant la planète `dune`.
+Au fur et à mesure, que nous avancerons, deux choses deviendront claires. Du point de vue de Redis, les clés sont tout
+et les valeurs rien. Autrement dit, Redis ne vous permets pas de faire des requêtes à propos des valeurs d'un objet.
+Dans l'exemple précédent, nous ne pouvons pas retrouver le(s) utilisateur(s) habitant la planète `dune`.
 
-Pour beaucoup, c'est un point critique. Nous vivons dans un monde où les requêtes sont tellement puissantes et flexibles que l'approche prônée par Redis semble primitive et abbérente. Ne vous laissez pas perturber par ceci. Rappelez-vous que Redis n'est pas une solution universelle à tout vos problèmes. Il y aura des problèmes que vous ne pourrez pas résoudre avec Redis (entre autre à cause des requêtes limitées). Mais considérez que vous trouverez d'autres façons de modéliser vos données.
+Pour beaucoup, c'est un point critique. Nous vivons dans un monde où les requêtes sont tellement puissantes et flexibles
+que l'approche prônée par Redis semble primitive et abbérente. Ne vous laissez pas perturber par ceci. Rappelez-vous que
+Redis n'est pas une solution universelle à tout vos problèmes. Il y aura des problèmes que vous ne pourrez pas résoudre
+avec Redis (entre autre à cause des requêtes limitées). Mais considérez que vous trouverez d'autres façons de modéliser
+vos données.
 
-Nous verrons quelques exemples concrets au fur et à mesure que nous avancerons, mais il est essentiel de comprendre cet aspect bien réel de Redis. Cela nous aide à comprendre pourquoi les valeurs stockées peuvent être de tout type - Redis n'ayant jamais besoin de les lire ou de les traityer. Cela nous aide aussi à modéliser nos données dans cette perspective.
+Nous verrons quelques exemples concrets au fur et à mesure que nous avancerons, mais il est essentiel de comprendre cet
+aspect bien réel de Redis. Cela nous aide à comprendre pourquoi les valeurs stockées peuvent être de tout type - Redis
+n'ayant jamais besoin de les lire ou de les traityer. Cela nous aide aussi à modéliser nos données dans cette
+perspective.
 
 
 ## Mémoire et persistence
 
-Nous avons donc mentionné auparavant que Redis est une base en mémoire persistente. Par rapport à la persistence, par défaut, Redis réalise des clichés de la base sur disque en fonction du nombre de clés modifiées. Vous pouvez configurer que toutes les X clés modifiées, la base soit sauvegardée tout les Y secondes. Par défaut, Redis sauvegarde la base toutes les 60 secondes si 1000 ou plus clés ont été modifiés ou toutes les 15 minutes si 9 ou moins ont été modifiées.
+Nous avons donc mentionné auparavant que Redis est une base en mémoire persistente. Par rapport à la persistence, par
+défaut, Redis réalise des clichés de la base sur disque en fonction du nombre de clés modifiées. Vous pouvez configurer
+que toutes les X clés modifiées, la base soit sauvegardée tout les Y secondes. Par défaut, Redis sauvegarde la base
+toutes les 60 secondes si 1000 ou plus clés ont été modifiés ou toutes les 15 minutes si 9 ou moins ont été modifiées.
 
-En alternative (ou en complément), Redis peut fonctionner en mode ajout. À chaque modification de clé, un fichier en ajout est mis à jour sur le disque. Dans certains cas, il est acceptable de perdre 60 secondes de données, en contrepartie de meilleures performances dans le cas d'une panne matérielle ou logicielle. Dans certains cas, la perte des données est préjudiciable. Redis vous donne ce choix. Dans le chapitre 6, nous verrons qu'il existe une troisième option qui est de déléguer la persistence à un esclave.
+En alternative (ou en complément), Redis peut fonctionner en mode ajout. À chaque modification de clé, un fichier en
+ajout est mis à jour sur le disque. Dans certains cas, il est acceptable de perdre 60 secondes de données, en
+contrepartie de meilleures performances dans le cas d'une panne matérielle ou logicielle. Dans certains cas, la perte
+des données est préjudiciable. Redis vous donne ce choix. Dans le chapitre 6, nous verrons qu'il existe une troisième
+option qui est de déléguer la persistence à un esclave.
 
-Vis à vis de la mémoire, Redis conserve toutes vos données en mémoire. La conséquence évidente de ceci est que la RAM est le premier facteur de coût matériel pour un serveur Redis.
+Vis à vis de la mémoire, Redis conserve toutes vos données en mémoire. La conséquence évidente de ceci est que la RAM
+est le premier facteur de coût matériel pour un serveur Redis.
 
-J'ai l'impression que certains développeurs n'ont plus en tête le peu d'espace que les données peuvent occuper. Les oeuvres complètes de William Shakespeare prennent à peu près 5.5 Mo. Pour le passage à l'échelle, les autres solutions tendent à être limités par les I/O ou la CPU. Limitation (RAM ou I/O) qui exigeront de vous de passer à l'échellle sur plusieurs machines en fonction des données que vous devrez stocker et traiter. À moins que vous stockiez des fichiers multimédias très large, le stockage des données en mémoire n'est pas un problème. Pour les applications où cela peut poser problèmes, vous devrez certainement faire un compromis pour être limité par les I/O au lieu de la mémoire.
+J'ai l'impression que certains développeurs n'ont plus en tête le peu d'espace que les données peuvent occuper. Les
+oeuvres complètes de William Shakespeare prennent à peu près 5.5 Mo. Pour le passage à l'échelle, les autres solutions
+tendent à être limités par les I/O ou la CPU. Limitation (RAM ou I/O) qui exigeront de vous de passer à l'échellle sur
+plusieurs machines en fonction des données que vous devrez stocker et traiter. À moins que vous stockiez des fichiers
+multimédias très large, le stockage des données en mémoire n'est pas un problème. Pour les applications où cela peut
+poser problèmes, vous devrez certainement faire un compromis pour être limité par les I/O au lieu de la mémoire.
 
-Par ailleurs, Redis gère également la mémoire virtuelle. Néanmoins, cette fonctionnalité a été considéré comme un échec (par les propres développeurs de Redis) et a été dépréciée.
+Par ailleurs, Redis gère également la mémoire virtuelle. Néanmoins, cette fonctionnalité a été considéré comme un échec
+(par les propres développeurs de Redis) et a été dépréciée.
 
-(Notons que le fichier de 5.5Mo contenant les oeuvres complètes de Shakespeare peuvent être compressé à environ 2Mo. Redis ne compresse pas automatiquement les données, mais comme il gére des tableaux d'octets, rien ne vous empêche de le faire vous-même.)
+(Notons que le fichier de 5.5Mo contenant les oeuvres complètes de Shakespeare peuvent être compressé à environ 2Mo.
+Redis ne compresse pas automatiquement les données, mais comme il gére des tableaux d'octets, rien ne vous empêche de le
+faire vous-même.)
 
 
 ## Récapitulons
 
-Nous avons abordés un certain nombre de sujets. La dernière chose que j'aimerais avant d'entrer dans les détails est de récapituler tout ces sujets. Plus précisement, les limitations des requêtes, les structures de données et la manière dont Redis stocke les données en mémoire.
+Nous avons abordés un certain nombre de sujets. La dernière chose que j'aimerais avant d'entrer dans les détails est de
+récapituler tout ces sujets. Plus précisement, les limitations des requêtes, les structures de données et la manière
+dont Redis stocke les données en mémoire.
 
-Quand vous mettez ces trois points ensemble, vous obtenez quelque chose de fantastique : la rapidité. Certains penseront "Bien évidemment, Redis est rapide car tout est en mémoire." Mais c'est qu'une partie de l'explication. La véritable raison pour laquelle Redis surpasse les autres solutions sont ses structures de données spécialisées.
+Quand vous mettez ces trois points ensemble, vous obtenez quelque chose de fantastique : la rapidité. Certains penseront
+"Bien évidemment, Redis est rapide car tout est en mémoire." Mais c'est qu'une partie de l'explication. La véritable
+raison pour laquelle Redis surpasse les autres solutions sont ses structures de données spécialisées.
 
-Comment plus rapide ? Cela dépends d'un grand nombre de facteurs - quels sont les commandes utilisées, le type des données, etc. Mais les performances de Redis sont de l'ordre de plusieurs dizaines de milliers ou centaines de milliers d'opérations **par seconde**. Vous pouvez lancer `redis-benchmark` (qui est dans le même répertoire que `redis-server` et `redis-cli`) pour vous en rendre compte.
+Comment plus rapide ? Cela dépends d'un grand nombre de facteurs - quels sont les commandes utilisées, le type des
+données, etc. Mais les performances de Redis sont de l'ordre de plusieurs dizaines de milliers ou centaines de milliers
+d'opérations **par seconde**. Vous pouvez lancer `redis-benchmark` (qui est dans le même répertoire que `redis-server`
+et `redis-cli`) pour vous en rendre compte.
 
-J'ai eu l'occasion de porter un code utilisant un modèle traditionnel à Redis. Un test de chargement que j'avais écrit prenait près de 5 minutes à s'exécuter en utilisant le modèle relationnel. Il a fallu 150ms avec Redis. Vous n'aurez pas toujours un gain aussi massif, mais cela devrait vous donnez une idée de ce dont on parle.
+J'ai eu l'occasion de porter un code utilisant un modèle traditionnel à Redis. Un test de chargement que j'avais écrit
+prenait près de 5 minutes à s'exécuter en utilisant le modèle relationnel. Il a fallu 150ms avec Redis. Vous n'aurez pas
+toujours un gain aussi massif, mais cela devrait vous donnez une idée de ce dont on parle.
 
-Il est essentiel de comprendre cet aspect de Redis parce qu'il impacte votre façon d'interagir avec. Les développeurs avec une expérience SQL ont souvent tendance à minimiser les interrogations à la base de données. C'est une bonne pratique avec n'importe quelle solution, Redis inclus. Cependant, étant donné que nous gérons des structures de données plus simples, nous devons parfois interroger le serveur Redis à plusieurs reprises pour arriver à nos fins. Ces manières d'accèder aux données peuvent sembler peu naturelles au départ, mais elles ont un coût négligeable par rapport aux gains en performances brutes obtenus.
+Il est essentiel de comprendre cet aspect de Redis parce qu'il impacte votre façon d'interagir avec. Les développeurs
+avec une expérience SQL ont souvent tendance à minimiser les interrogations à la base de données. C'est une bonne
+pratique avec n'importe quelle solution, Redis inclus. Cependant, étant donné que nous gérons des structures de données
+plus simples, nous devons parfois interroger le serveur Redis à plusieurs reprises pour arriver à nos fins. Ces manières
+d'accèder aux données peuvent sembler peu naturelles au départ, mais elles ont un coût négligeable par rapport aux gains
+en performances brutes obtenus.
 
 ## Dans ce chapitre
 
-Bien que nous avons à peine eu l'occasion de jouer avec Redis, nous avons déjà couvert un champs très large de sujets. Ne vous inquiétez pas si certains points restent confus - comme les requêtes. Nous irons droit au but lors du chapitre suivant et la plupart de vos questions y trouveront j'espère une réponse.
+Bien que nous avons à peine eu l'occasion de jouer avec Redis, nous avons déjà couvert un champs très large de sujets.
+Ne vous inquiétez pas si certains points restent confus - comme les requêtes. Nous irons droit au but lors du chapitre
+suivant et la plupart de vos questions y trouveront j'espère une réponse.
 
 Les point principaux abordés dans ce chapitre sont :
 
@@ -184,27 +321,45 @@ Les point principaux abordés dans ce chapitre sont :
 
 * Redis expose (et utilise en interne) uniquement cinq structures de données
 
-* Ensemble, tout les points ci-dessus font de Redis une base rapide et simple d'utilisation mais pas adaptée à tout les scénarios
+* Ensemble, tout les points ci-dessus font de Redis une base rapide et simple d'utilisation mais pas adaptée à tout les
+scénarios
 
 # Chaptre 2 - Les Structures de Données 
 
-Il est temps jeter un coup d'oeil aux cinq structures de données de Redis. Nous allons expliquer ce qu'est chaque structure de données, quelles sont les méthodes disponibles et pour quel type de fonctionnalité ou de donnée vous allez les utiliser.
+Il est temps jeter un coup d'oeil aux cinq structures de données de Redis. Nous allons expliquer ce qu'est chaque
+structure de données, quelles sont les méthodes disponibles et pour quel type de fonctionnalité ou de donnée vous allez
+les utiliser.
 
-Les seules construction du langage que nous avons vu jusque là sont les commandes, les clés et les valeurs. Jusqu'ici rien de concret à propos des structures de données. Quand nous utilisons la commande `set`, comment Redis peut-il savoir quelle structure de données utiliser? Il s'avère que chaque commande est spécifique à une structure de données. Par exemple, quand vous utilisez `set`, vous êtes en train de stocker une valeur dans une structure de données de type string. Quand vous utilisez `hset`, vous êtes en train de stocker un hash. Compte tenu de la taille restreinte du vocabulaire de Redis, cela devrait être gérable.
+Les seules construction du langage que nous avons vu jusque là sont les commandes, les clés et les valeurs. Jusqu'ici
+rien de concret à propos des structures de données. Quand nous utilisons la commande `set`, comment Redis peut-il savoir
+quelle structure de données utiliser? Il s'avère que chaque commande est spécifique à une structure de données. Par
+exemple, quand vous utilisez `set`, vous êtes en train de stocker une valeur dans une structure de données de type
+string. Quand vous utilisez `hset`, vous êtes en train de stocker un hash. Compte tenu de la taille restreinte du
+vocabulaire de Redis, cela devrait être gérable.
 
-**[Le site web de Redis](http://redis.io/commands) a une très bonne documentation de référence. Il n'est pas ici question de répéter le travail qu'ils ont déjà réalisé. Nous allons seulement couvrir les commandes les plus importantes nécessaires pour la compréhension des différentes structures de données.**
+**[Le site web de Redis](http://redis.io/commands) a une très bonne documentation de référence. Il n'est pas ici
+question de répéter le travail qu'ils ont déjà réalisé. Nous allons seulement couvrir les commandes les plus importantes
+ nécessaires pour la compréhension des différentes structures de données.**
 
-Il n'y a rien de plus important que de prendre du plaisir en essayant de tester les concepts. Vous pouvez toujours supprimer toutes les données de votre base de données en entrant `flushdb`, alors ne soyez pas timide et essayer de tenter des choses un peu folles!
+Il n'y a rien de plus important que de prendre du plaisir en essayant de tester les concepts. Vous pouvez toujours
+supprimer toutes les données de votre base de données en entrant `flushdb`, alors ne soyez pas timide et essayer de
+tenter des choses un peu folles!
 
 ## Strings
 
-Les Strings sont les structures de données disponibles dans Redis les plus basiques., Quand nous pensez à une paire clée-valeur, vous pensez à des strings. Ne soyez pas perplexe par rapport au nom, comme toujours, votre valeur peut être n'importe quoi. Je préfère les appeler des 'scalaires', mais ce n'est peut-être que moi.
+Les Strings sont les structures de données disponibles dans Redis les plus basiques., Quand nous pensez à une paire
+clée-valeur, vous pensez à des strings. Ne soyez pas perplexe par rapport au nom, comme toujours, votre valeur peut
+être n'importe quoi. Je préfère les appeler des 'scalaires', mais ce n'est peut-être que moi.
 
-Nous avons déjà vu un cas classique d'usage des strings, pour le stockage d'instances d'objets via des clées. C'est quelque chose que vous risquez d'utiliser très souvent :
+Nous avons déjà vu un cas classique d'usage des strings, pour le stockage d'instances d'objets via des clées. C'est
+quelque chose que vous risquez d'utiliser très souvent :
 
 	set users:leto "{name: leto, planet: dune, likes: [spice]}"
 
-De manière aditionnelle, Redis vous permet de réaliser certaines opérations très classiques. Par exemple `strlen <key>` peut être utilisée pour récupérer la longueur d'une valeur associée à une clée; `getrange <key> <start> <end>` retourne la sous-chaîne correspondante de la valeur associée à la clée fournie; `append <key> <value>` ajoute la valeur à une valeur existante (ou la créée si elle n'existait pas déjà). Allez-y et essayez ces opérations. Voici ce que j'obtiens :
+De manière aditionnelle, Redis vous permet de réaliser certaines opérations très classiques. Par exemple `strlen <key>`
+peut être utilisée pour récupérer la longueur d'une valeur associée à une clée; `getrange <key> <start> <end>` retourne
+la sous-chaîne correspondante de la valeur associée à la clée fournie; `append <key> <value>` ajoute la valeur à une
+valeur existante (ou la créée si elle n'existait pas déjà). Allez-y et essayez ces opérations. Voici ce que j'obtiens :
 
 	> strlen users:leto
 	(integer) 42
@@ -215,9 +370,16 @@ De manière aditionnelle, Redis vous permet de réaliser certaines opérations t
 	> append users:leto " OVER 9000!!"
 	(integer) 54
 
-Maintenant, vous devriez vous dire : c'est super, mais ça n'a pas de sens. Vous ne pouvez pas récupérer une partie d'une donnée JSON ou ajouter une valeur simplement. Vous avez raison, la leçon à tirer ici est que certaines commandes, et plus particulièrement avec les structures de données de type strings, ne font sens pour que des types de données spécifiques.
+Maintenant, vous devriez vous dire : c'est super, mais ça n'a pas de sens. Vous ne pouvez pas récupérer une partie
+d'une donnée JSON ou ajouter une valeur simplement. Vous avez raison, la leçon à tirer ici est que certaines commandes,
+et plus particulièrement avec les structures de données de type strings, ne font sens pour que des types de données
+spécifiques.
 
-Plus haut nous avons appris que Redis ne tient aucun compte des valeurs. La plupart du temps c'est vrai. Cependant, quelques commandes relatives aux strings sont spécifiques à certains types ou structures de données. Comme vague exemple, je vois notamment l'usage des fonctions déjà citées comme `append` et `getrange` qui sont utiles dans quelques cas de sérialisation efficace en terme d'espace mémoire. Comme exemples plus concret, je vous donne les commandes `incr`, `incrby`, `decr` et `decrby`. Ces commandes incrémentent ou décrémentent la valeur d'une string:
+Plus haut nous avons appris que Redis ne tient aucun compte des valeurs. La plupart du temps c'est vrai. Cependant,
+quelques commandes relatives aux strings sont spécifiques à certains types ou structures de données. Comme vague
+exemple, je vois notamment l'usage des fonctions déjà citées comme `append` et `getrange` qui sont utiles dans quelques
+cas de sérialisation efficace en terme d'espace mémoire. Comme exemples plus concret, je vous donne les commandes
+`incr`, `incrby`, `decr` et `decrby`. Ces commandes incrémentent ou décrémentent la valeur d'une string:
 
 	> incr stats:page:about
 	(integer) 1
@@ -229,7 +391,8 @@ Plus haut nous avons appris que Redis ne tient aucun compte des valeurs. La plup
 	> incrby ratings:video:12333 3
 	(integer) 8
 
-Comme vous pouvez l'imaginer, les strings Redis sont parfaites pour les statistiques. Essayez d'incrémenter `users:leto` (une valeur non-entière) et voyez ce qui arrive (vous devriez avoir une erreur).
+Comme vous pouvez l'imaginer, les strings Redis sont parfaites pour les statistiques. Essayez d'incrémenter `users:leto`
+ (une valeur non-entière) et voyez ce qui arrive (vous devriez avoir une erreur).
 
 Un exemple plus avancé est celui des commandes `setbit` et `getbit`. Il y a un [superbe article](http://blog.getspool
 .com/2011/11/29/fast-easy-realtime-metrics-using-redis-bitmaps/) sur la façon dont Spool utilise ces deux commandes
@@ -246,12 +409,15 @@ des données.
 
 ## Hashes
 
-Hashes are a good example of why calling Redis a key-value store isn't quite accurate. You see, in a lot of ways, hashes are like strings. The important difference is that they provide an extra level of indirection: a field. Therefore, the hash equivalents of `set` and `get` are:
+Hashes are a good example of why calling Redis a key-value store isn't quite accurate. You see, in a lot of ways, hashes
+ are like strings. The important difference is that they provide an extra level of indirection: a field. Therefore, the
+ hash equivalents of `set` and `get` are:
 
 	hset users:goku powerlevel 9000
 	hget users:goku powerlevel
 
-We can also set multiple fields at once, get multiple fields at once, get all fields and values, list all the fields or delete a specific field:
+We can also set multiple fields at once, get multiple fields at once, get all fields and values, list all the fields or
+delete a specific field:
 
 	hmset users:goku race saiyan age 737
 	hmget users:goku race powerlevel
@@ -259,9 +425,14 @@ We can also set multiple fields at once, get multiple fields at once, get all fi
 	hkeys users:goku
 	hdel users:goku age
 
-As you can see, hashes give us a bit more control over plain strings. Rather than storing a user as a single serialized value, we could use a hash to get a more accurate representation. The benefit would be the ability to pull and update/delete specific pieces of data, without having to get or write the entire value.
+As you can see, hashes give us a bit more control over plain strings. Rather than storing a user as a single serialized
+value, we could use a hash to get a more accurate representation. The benefit would be the ability to pull and update/delete
+specific pieces of data, without having to get or write the entire value.
 
-Looking at hashes from the perspective of a well-defined object, such as a user, is key to understanding how they work. And it's true that, for performance reasons, more granular control might be useful. However, in the next chapter we'll look at how hashes can be used to organize your data and make querying more practical. In my opinion, this is where hashes really shine.
+Looking at hashes from the perspective of a well-defined object, such as a user, is key to understanding how they work.
+And it's true that, for performance reasons, more granular control might be useful. However, in the next chapter we'll
+look at how hashes can be used to organize your data and make querying more practical. In my opinion, this is where
+hashes really shine.
 
 ## Lists
 
