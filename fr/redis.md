@@ -464,48 +464,63 @@ peuvent être n'importe quoi. Vous pouvez utiliser les Listes afin de stocker le
 utilisateur va suivre sur un site. Si vous êtes en train de construire un jeu, vous pourriez utiliser les Listes pour
  suivre les actions mises en queue par un utilisateur.
 
-## Sets
+## Les Sets
 
-Set are used to store unique values and provide a number of set-based operations, like unions. Sets aren't ordered but
-they provide efficient value-based operations. A friend's list is the classic example of using a set:
+Les Sets sont utilisés pour stocker des valeurs uniques et fournissent un ensemble d'opération en lien avec les
+ensembles, comme les unions. Les Sets en sont pas ordonnés, mais ils fournissent un ensemble d'opération efficaces
+sur les valeurs. Une liste d'amis est l'exemple classique de l'usage d'un Set :
 
 	sadd friends:leto ghanima paul chani jessica
 	sadd friends:duncan paul jessica alia
 
-Regardless of how many friends a user has, we can efficiently tell (O(1)) whether userX is a friend of userY or not:
+En fonction du nombre d'amis que peut avoir l'utilisateur, nous pouvons dire en O(1) si un utilisateur userX est un
+ami ou non de l'utilisateur userY :
 
 	sismember friends:leto jessica
 	sismember friends:leto vladimir
 
-Furthermore we can see what two or more people share the same friends:
+De plus, nous pouvons voir que deux ou plusieurs personnes partagent les mêmes amis :
 
 	sinter friends:leto friends:duncan
 
-and even store the result at a new key:
+et même stocker le résultation comme une nouvelle clée :
 
 	sinterstore friends:leto_duncan friends:leto friends:duncan
 
-Sets are great for tagging or tracking any other properties of a value for which duplicates don't make any sense (or where we want to apply set operations such as intersections and unions).
+Les ensembles sont parfaits pour tagguer et suivre n'importe quelle propriété d'une valeur pour laquelle des doubles
+n'ont pas de sens (ou lorsque nous voulons appliquer des opérations sur les ensembles comme des intersections ou des
+unions).
 
-## Sorted Sets
+## Les Sorted Sets (Ensembles Triés)
 
-The last and most powerful data structure are sorted sets. If hashes are like strings but with fields, then sorted sets are like sets but with a score. The score provides sorting and ranking capabilities. If we wanted a ranked list of friends, we might do:
+La dernière et plus puissante structure de données et le Sorted Set (ou ensemble trié). Si les Hashs sont comme les
+Strings mais avec des champs, les Sorted Sets sont comme les Sets, mais avec un score. Les scores fournissent des
+capacités de tri et de classement. Si nous souhaitons une liste classée d'amis,
+nous ferons cela de la manière suivante :
 
 	zadd friends:duncan 70 ghanima 95 paul 95 chani 75 jessica 1 vladimir
 
-Want to find out how many friends `duncan` has with a score of 90 or over?
+Vous souhaitez trouver combien d'amis à `duncan` avec un score supérieur ou égal à 90 ?
 
 	zcount friends:duncan 90 100
 
-How about figuring out `chani`'s rank?
+Ou alors savoir quel est le classement de `chani` ?
 
 	zrevrank friends:duncan chani
 
-We use `zrevrank` instead of `zrank` since Redis' default sort is from low to high (but in this case we are ranking from high to low). The most obvious use-case for sorted sets is a leaderboard system. In reality though, anything you want sorted by an some integer, and be able to efficiently manipulate based on that score, might be a good fit for a sorted set.
+Nous utilisons `zrevrank` au lieu de `zrank` dans la mesure où le tri par défaut de Redis est ascendant (mais dans ce
+ cas nous souhaitons trier de manière descendante). L'usage le plus évident pour un Sorted Set est un système de
+ classement. En réalité cependant, tout ce que vous souhaiteriez trier par une valeur entière, et être capable de
+ manipuler efficacement à travers l'utilisation d'un score, pourrait être bien mis en place à travers un ensemble trié.
 
-## In This Chapter
+## Dans ce chapitre
 
-That's a high level overview of Redis' five data structures. One of the neat things about Redis is that you can often do more than you first realize. There are probably ways to use string and sorted sets that no one has thought of yet. As long as you understand the normal use-case though, you'll find Redis ideal for all types of problems. Also, just because Redis exposes five data structures and various methods, don't think you need to use all of them. It isn't uncommon to build a feature while only using a handful of commands.
+Nous avons pu avoir un aperçu des cinq structures de données de Redis. Une des choses les plus intéressant à propos
+de Redis est le fait que vous pouvez souvent faire plus que ce que vous n'auriez imaginé à priori. Tant que vous
+comprendrez les cas d'utilisation nominaux , vous pourrez voir que Redis est idéal pour répondre à tout type de
+problème., De plus, ce n'est pas parce que Redis expose cinq structures de données et des méthodes variées,
+qu'il est nécessaire de toutes les utiliser. Il est commun de mettre en place une fonctionnalité en n'utilisant qu'un
+ petit sous-ensemble de commandes.
 
 # Chapter 3 - Leveraging Data Structures
 
