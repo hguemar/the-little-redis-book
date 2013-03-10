@@ -408,16 +408,15 @@ comme il est très rapide de récupérer des valeurs grâce à leurs clés, les 
 des données.
 
 ## Les Hashs
-
-Hashes are a good example of why calling Redis a key-value store isn't quite accurate. You see, in a lot of ways, hashes
- are like strings. The important difference is that they provide an extra level of indirection: a field. Therefore, the
- hash equivalents of `set` and `get` are:
+Les Hashs sont un bon exemple montrant qu'appeler Redis une base de données clée-valeur n'est pas correct. Vous voyez,
+pour plusieurs raisons, les Hashs sont comme les Strings. La différence importante est qu'ils fournissent un niveau
+supplémentaire d'indirection: un champ. Ainsi, les équivalents de `set` et `get` sont :
 
 	hset users:goku powerlevel 9000
 	hget users:goku powerlevel
 
-We can also set multiple fields at once, get multiple fields at once, get all fields and values, list all the fields or
-delete a specific field:
+Nous pouvons aussi associer différents champs à la fois, récupérer plusieurs champs à la fois, récupérer tous les
+champs et leurs valeurs, lister tous les champs, ou supprimer un champ spécifique:
 
 	hmset users:goku race saiyan age 737
 	hmget users:goku race powerlevel
@@ -425,36 +424,50 @@ delete a specific field:
 	hkeys users:goku
 	hdel users:goku age
 
-As you can see, hashes give us a bit more control over plain strings. Rather than storing a user as a single serialized
-value, we could use a hash to get a more accurate representation. The benefit would be the ability to pull and update/delete
-specific pieces of data, without having to get or write the entire value.
+Comme vous pouvez le voir, les Hashs nous donnent plus de contrôle sur les valeurs que les Strings. Plutôt que de
+stocker un utilisateur comme une simple valeur sérialisée, nous pouvons utiliser un Hash afin d'en donner une
+représentation plus précise. Le bénéfice serait alors la capacité de récupérér et mettre à jour/supprimer des
+éléments spécifiques de la donnée, sans avoir à écrire et lire la valeur entière.
 
-Looking at hashes from the perspective of a well-defined object, such as a user, is key to understanding how they work.
-And it's true that, for performance reasons, more granular control might be useful. However, in the next chapter we'll
-look at how hashes can be used to organize your data and make querying more practical. In my opinion, this is where
-hashes really shine.
+Voir les Hashs avec comme perspective celle d'un objet défini complètement, tel qu'un utilisateur,
+est la clée de la compréhension de leur fonctionnement. Et il est vrai, que pour des raisons de perfornace,
+un contrôle plus fin peut être utile. Cependant, dans le prochain chapitre, nous allons voire de quelle manière les
+Hashs peuvent être utiliser pour organiser vos données et faire des requêtes plus simplement. De mon point de vue,
+c'est là que les Hashs deviennent vraiment intéressants.
 
-## Lists
+## Les Listes
 
-Lists let you store and manipulate an array of values for a given key. You can add values to the list, get the first or last value and manipulate values at a given index. Lists maintain their order and have efficient index-based operations. We could have a `newusers` list which tracks the newest registered users to our site:
+Les Listes vous permettent de stocker et manipuler des tableaux de valeurs pour une certaine clée. Vous pouvez
+ajouter des valeurs à la liste, récupérer la première ou la dernière valeur et manipuler les valeurs en utilisant les
+ index. Les Listes maintiennent un ordre et possèdent des opérations sur les index efficaces. Nous pouvons avoir une
+ Liste `newusers` qui traque les utilisateurs nouvellement enregistrés sur notre site :
 
 	lpush newusers goku
 	ltrim newusers 0 50
 
-First we push a new user at the front of the list, then we trim it so that it only contains the last 50 users. This is a common pattern. `ltrim` is an O(N) operation, where N is the number of values we are removing. In this case, where we always trim after a single insert, it'll actually have a constant performance of O(1) (because N will always be equal to 1).
+Tout d'abord, poussons un nouvel utilisateur sur le haut de la Liste, et ensuite ajuston la liste afin qu'elle ne
+contienne que les 50 derniers utilisateurs. Ceci est un pattern classique. `ltrim` est une opération en O(N),
+où N est le nombre de valeurs à supprimer. Dans ce cas, où nous ajustons la Liste après chaque insertion,
+l'opération aura une opération constante en O(1) (car N sera toujours égal à 1).
 
-This is also the first time that we are seeing a value in one key referencing a value in another. If we wanted to get the details of the last 10 users, we'd do the following combination:
+Ceci est aussi la première fois que nous voyons une valeur correspondant à une clée qui référence une valeur dans une
+ autre. Si nous souhaitons avoir le détail des 10 derniers utilisateurs, nous devons réaliser l'opération suivante :
 
 	keys = redis.lrange('newusers', 0, 10)
 	redis.mget(*keys.map {|u| "users:#{u}"})
 
-The above is a bit of Ruby which shows the type of multiple roundtrips we talked about before.
+Le code ci-dessus est écrit en Ruby et il montre le type de multiples aller-retour à réaliser dont nous avons parlé
+auparavant.
 
-Of course, lists aren't only good for storing references to other keys. The values can be anything. You could use lists to store logs or track the path a user is taking through a site. If you were building a game, you might use it to track a queued user actions.
+Bien sûr, les Listes ne sont pas uniquement bonnes pour le stockage de références vers d'autres clées. Les valeurs
+peuvent être n'importe quoi. Vous pouvez utiliser les Listes afin de stocker les logs ou traquer les chemins qu'un
+utilisateur va suivre sur un site. Si vous êtes en train de construire un jeu, vous pourriez utiliser les Listes pour
+ suivre les actions mises en queue par un utilisateur.
 
 ## Sets
 
-Set are used to store unique values and provide a number of set-based operations, like unions. Sets aren't ordered but they provide efficient value-based operations. A friend's list is the classic example of using a set:
+Set are used to store unique values and provide a number of set-based operations, like unions. Sets aren't ordered but
+they provide efficient value-based operations. A friend's list is the classic example of using a set:
 
 	sadd friends:leto ghanima paul chani jessica
 	sadd friends:duncan paul jessica alia
