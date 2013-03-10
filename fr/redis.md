@@ -524,46 +524,70 @@ qu'il est nécessaire de toutes les utiliser. Il est commun de mettre en place u
 
 # Chapter 3 - Leveraging Data Structures
 
-In the previous chapter we talked about the five data structures and gave some examples of what problems they might solve. Now it's time to look at a few more advanced, yet common, topics and design patterns.
+In the previous chapter we talked about the five data structures and gave some examples of what problems they might
+solve. Now it's time to look at a few more advanced, yet common, topics and design patterns.
 
 ## Big O Notation
 
-Throughout this book we've made references to the Big O notation in the form of O(n) or O(1). Big O notation is used to explain how something behaves given a certain number of elements. In Redis, it's used to tell us how fast a command is based on the number of items we are dealing with.
+Throughout this book we've made references to the Big O notation in the form of O(n) or O(1). Big O notation is used to
+explain how something behaves given a certain number of elements. In Redis, it's used to tell us how fast a command is
+based on the number of items we are dealing with.
 
-Redis documentation tells us the Big O notation for each of its commands. It also tells us what the factors are that influence the performance. Let's look at some examples.
+Redis documentation tells us the Big O notation for each of its commands. It also tells us what the factors are that
+influence the performance. Let's look at some examples.
 
-The fastest anything can be is O(1) which is a constant. Whether we are dealing with 5 items or 5 million, you'll get the same performance. The `sismember` command, which tells us if a value belongs to a set, is O(1). `sismember` is a powerful command, and its performance characteristics are a big reason for that. A number of Redis commands are O(1).
+The fastest anything can be is O(1) which is a constant. Whether we are dealing with 5 items or 5 million, you'll get
+the same performance. The `sismember` command, which tells us if a value belongs to a set, is O(1). `sismember` is a
+powerful command, and its performance characteristics are a big reason for that. A number of Redis commands are O(1).
 
-Logarithmic, or O(log(N)), is the next fastest possibility because it needs to scan through smaller and smaller partitions. Using this type of divide and conquer approach, a very large number of items quickly gets broken down in a few iterations. `zadd` is a O(log(N)) command, where N is the number of elements already in the set.
+Logarithmic, or O(log(N)), is the next fastest possibility because it needs to scan through smaller and smaller
+partitions. Using this type of divide and conquer approach, a very large number of items quickly gets broken down in a
+few iterations. `zadd` is a O(log(N)) command, where N is the number of elements already in the set.
 
-Next we have linear commands, or O(N). Looking for a non-indexed column in a table is an O(N) operation. So is using the `ltrim` command. However, in the case of `ltrim`, N isn't the number of elements in the list, but rather the elements being removed. Using `ltrim` to remove 1 item from a list of millions will be faster than using `ltrim` to remove 10 items from a list of thousands. (Though they'll probably both be so fast that you wouldn't be able to time it.)
+Next we have linear commands, or O(N). Looking for a non-indexed column in a table is an O(N) operation. So is using
+the `ltrim` command. However, in the case of `ltrim`, N isn't the number of elements in the list, but rather the
+elements being removed. Using `ltrim` to remove 1 item from a list of millions will be faster than using `ltrim` to
+remove 10 items from a list of thousands. (Though they'll probably both be so fast that you wouldn't be able to time
+it.)
 
-`zremrangebyscore` which removes elements from a sorted set with a score between a minimum and a maximum value has a complexity of O(log(N)+M). This makes it a mix. By reading the documentation we see that N is the number of total elements in the set and M is the number of elements to be removed. In other words, the number of elements that'll get removed is probably going to be more significant, in terms of performance, than the total number of elements in the set.
+`zremrangebyscore` which removes elements from a sorted set with a score between a minimum and a maximum value has a
+complexity of O(log(N)+M). This makes it a mix. By reading the documentation we see that N is the number of total
+elements in the set and M is the number of elements to be removed. In other words, the number of elements that'll get
+removed is probably going to be more significant, in terms of performance, than the total number of elements in the set.
 
-The `sort` command, which we'll discuss in greater detail in the next chapter has a complexity of O(N+M*log(M)). From its performance characteristic, you can probably tell that this is one of Redis' most complex commands.
+The `sort` command, which we'll discuss in greater detail in the next chapter has a complexity of O(N+M*log(M)). From
+its performance characteristic, you can probably tell that this is one of Redis' most complex commands.
 
-There are a number of other complexities, the two remaining common ones are O(N^2) and O(C^N). The larger N is, the worse these perform relative to a smaller N. None of Redis' commands have this type of complexity.
+There are a number of other complexities, the two remaining common ones are O(N^2) and O(C^N). The larger N is, the
+worse these perform relative to a smaller N. None of Redis' commands have this type of complexity.
 
-It's worth pointing out that the Big O notation deals with the worst case. When we say that something takes O(N), we might actually find it right away or it might be the last possible element.
+It's worth pointing out that the Big O notation deals with the worst case. When we say that something takes O(N), we
+might actually find it right away or it might be the last possible element.
 
 
 ## Pseudo Multi Key Queries
 
-A common situation you'll run into is wanting to query the same value by different keys. For example, you might want to get a user by email (for when they first log in) and also by id (after they've logged in). One horrible solution is to duplicate your user object into two string values:
+A common situation you'll run into is wanting to query the same value by different keys. For example, you might want to
+get a user by email (for when they first log in) and also by id (after they've logged in). One horrible solution is to
+duplicate your user object into two string values:
 
 	set users:leto@dune.gov "{id: 9001, email: 'leto@dune.gov', ...}"
 	set users:9001 "{id: 9001, email: 'leto@dune.gov', ...}"
 
 This is bad because it's a nightmare to manage and it takes twice the amount of memory.
 
-It would be nice if Redis let you link one key to another, but it doesn't (and it probably never will). A major driver in Redis' development is to keep the code and API clean and simple. The internal implementation of linking keys (there's a lot we can do with keys that we haven't talked about yet) isn't worth it when you consider that Redis already provides a solution: hashes.
+It would be nice if Redis let you link one key to another, but it doesn't (and it probably never will). A major driver
+in Redis' development is to keep the code and API clean and simple. The internal implementation of linking keys (there's
+a lot we can do with keys that we haven't talked about yet) isn't worth it when you consider that Redis already
+provides a solution: hashes.
 
 Using a hash, we can remove the need for duplication:
 
 	set users:9001 "{id: 9001, email: leto@dune.gov, ...}"
 	hset users:lookup:email leto@dune.gov 9001
 
-What we are doing is using the field as a pseudo secondary index and referencing the single user object. To get a user by id, we issue a normal `get`:
+What we are doing is using the field as a pseudo secondary index and referencing the single user object. To get a user
+by id, we issue a normal `get`:
 
 	get users:9001
 
@@ -572,31 +596,44 @@ To get a user by email, we issue an `hget` followed by a `get` (in Ruby):
 	id = redis.hget('users:lookup:email', 'leto@dune.gov')
 	user = redis.get("users:#{id}")
 
-This is something that you'll likely end up doing often. To me, this is where hashes really shine, but it isn't an obvious use-case until you see it.
+This is something that you'll likely end up doing often. To me, this is where hashes really shine, but it isn't an
+obvious use-case until you see it.
 
 ## References and Indexes
 
-We've seen a couple examples of having one value reference another. We saw it when we looked at our list example, and we saw it in the section above when using hashes to make querying a little easier. What this comes down to is essentially having to manually manage your indexes and references between values. Being honest, I think we can say that's a bit of a downer, especially when you consider having to manage/update/delete these references manually. There is no magic solution to solving this problem in Redis.
+We've seen a couple examples of having one value reference another. We saw it when we looked at our list example, and
+we saw it in the section above when using hashes to make querying a little easier. What this comes down to is
+essentially having to manually manage your indexes and references between values. Being honest, I think we can say
+that's a bit of a downer, especially when you consider having to manage/update/delete these references manually. There
+is no magic solution to solving this problem in Redis.
 
 We already saw how sets are often used to implement this type of manual index:
 
 	sadd friends:leto ghanima paul chani jessica
 
-Each member of this set is a reference to a Redis string value containing details on the actual user. What if `chani` changes her name, or deletes her account? Maybe it would make sense to also track the inverse relationships:
+Each member of this set is a reference to a Redis string value containing details on the actual user. What if `chani`
+changes her name, or deletes her account? Maybe it would make sense to also track the inverse relationships:
 
 	sadd friends_of:chani leto paul
 
-Maintenance cost aside, if you are anything like me, you might cringe at the processing and memory cost of having these extra indexed values. In the next section we'll talk about ways to reduce the performance cost of having to do extra round trips (we briefly talked about it in the first chapter).
+Maintenance cost aside, if you are anything like me, you might cringe at the processing and memory cost of having these
+extra indexed values. In the next section we'll talk about ways to reduce the performance cost of having to do extra
+round trips (we briefly talked about it in the first chapter).
 
-If you actually think about it though, relational databases have the same overhead. Indexes take memory, must be scanned or ideally seeked and then the corresponding records must be looked up. The overhead is neatly abstracted away (and they  do a lot of optimizations in terms of the processing to make it very efficient).
+If you actually think about it though, relational databases have the same overhead. Indexes take memory, must be scanned
+or ideally seeked and then the corresponding records must be looked up. The overhead is neatly abstracted away (and they
+do a lot of optimizations in terms of the processing to make it very efficient).
 
-Again, having to manually deal with references in Redis is unfortunate. But any initial concerns you have about the performance or memory implications of this should be tested. I think you'll find it a non-issue.
+Again, having to manually deal with references in Redis is unfortunate. But any initial concerns you have about the
+performance or memory implications of this should be tested. I think you'll find it a non-issue.
 
 ## Round Trips and Pipelining
 
-We already mentioned that making frequent trips to the server is a common pattern in Redis. Since it is something you'll do often, it's worth taking a closer look at what features we can leverage to get the most out of it.
+We already mentioned that making frequent trips to the server is a common pattern in Redis. Since it is something you'll
+do often, it's worth taking a closer look at what features we can leverage to get the most out of it.
 
-First, many commands either accept one or more set of parameters or have a sister-command which takes multiple parameters. We saw `mget` earlier, which takes multiple keys and returns the values:
+First, many commands either accept one or more set of parameters or have a sister-command which takes multiple
+parameters. We saw `mget` earlier, which takes multiple keys and returns the values:
 
 	keys = redis.lrange('newusers', 0, 10)
 	redis.mget(*keys.map {|u| "users:#{u}"})
@@ -606,11 +643,16 @@ Or the `sadd` command which adds 1 or more members to a set:
 	sadd friends:vladimir piter
 	sadd friends:paul jessica leto "leto II" chani
 
-Redis also supports pipelining. Normally when a client sends a request to Redis it waits for the reply before sending the next request. With pipelining you can send a number of requests without waiting for their responses. This reduces the networking overhead and can result in significant performance gains.
+Redis also supports pipelining. Normally when a client sends a request to Redis it waits for the reply before sending
+the next request. With pipelining you can send a number of requests without waiting for their responses. This reduces
+the networking overhead and can result in significant performance gains.
 
-It's worth noting that Redis will use memory to queue up the commands, so it's a good idea to batch them. How large a batch you use will depend on what commands you are using, and more specifically, how large the parameters are. But, if you are issuing commands against ~50 character keys, you can probably batch them in thousands or tens of thousands.
+It's worth noting that Redis will use memory to queue up the commands, so it's a good idea to batch them. How large a
+batch you use will depend on what commands you are using, and more specifically, how large the parameters are. But, if
+you are issuing commands against ~50 character keys, you can probably batch them in thousands or tens of thousands.
 
-Exactly how you execute commands within a pipeline will vary from driver to driver. In Ruby you pass a block to the `pipelined` method:
+Exactly how you execute commands within a pipeline will vary from driver to driver. In Ruby you pass a block to the
+`pipelined` method:
 
 	redis.pipelined do
 	  9001.times do
@@ -622,9 +664,12 @@ As you can probably guess, pipelining can really speed up a batch import!
 
 ## Transactions
 
-Every Redis command is atomic, including the ones that do multiple things. Additionally, Redis has support for transactions when using multiple commands.
+Every Redis command is atomic, including the ones that do multiple things. Additionally, Redis has support for
+transactions when using multiple commands.
 
-You might not know it, but Redis is actually single-threaded, which is how every command is guaranteed to be atomic. While one command is executing, no other command will run. (We'll briefly talk about scaling in a later chapter.) This is particularly useful when you consider that some commands do multiple things. For example:
+You might not know it, but Redis is actually single-threaded, which is how every command is guaranteed to be atomic.
+While one command is executing, no other command will run. (We'll briefly talk about scaling in a later chapter.) This
+is particularly useful when you consider that some commands do multiple things. For example:
 
 `incr` is essentially a `get` followed by a `set`
 
@@ -632,22 +677,30 @@ You might not know it, but Redis is actually single-threaded, which is how every
 
 `setnx` first checks if the key exists, and only sets the value if it does not
 
-Although these commands are useful, you'll inevitably need to run multiple commands as an atomic group. You do so by first issuing the `multi` command, followed by all the commands you want to execute as part of the transaction, and finally executing `exec` to actually execute the commands or `discard` to throw away, and not execute the commands. What guarantee does Redis make about transactions?
+Although these commands are useful, you'll inevitably need to run multiple commands as an atomic group. You do so by
+first issuing the `multi` command, followed by all the commands you want to execute as part of the transaction, and
+finally executing `exec` to actually execute the commands or `discard` to throw away, and not execute the commands.
+What guarantee does Redis make about transactions?
 
 * The commands will be executed in order
 
-* The commands will be executed as a single atomic operation (without another client's command being executed halfway through)
+* The commands will be executed as a single atomic operation (without another client's command being executed halfway
+through)
 
 * That either all or none of the commands in the transaction will be executed
 
-You can, and should, test this in the command line interface. Also note that there's no reason why you can't combine pipelining and transactions.
+You can, and should, test this in the command line interface. Also note that there's no reason why you can't combine
+pipelining and transactions.
 
 	multi
 	hincrby groups:1percent balance -9000000000
 	hincrby groups:99percent balance 9000000000
 	exec
 
-Finally, Redis lets you specify a key (or keys) to watch and conditionally apply a transaction if the key(s) changed. This is used when you need to get values and execute code based on those values, all in a transaction. With the code above, we wouldn't be able to implement our own `incr` command since they are all executed together once `exec` is called. From code, we can't do:
+Finally, Redis lets you specify a key (or keys) to watch and conditionally apply a transaction if the key(s) changed.
+This is used when you need to get values and execute code based on those values, all in a transaction. With the code
+above, we wouldn't be able to implement our own `incr` command since they are all executed together once `exec` is
+called. From code, we can't do:
 
 	redis.multi()
 	current = redis.get('powerlevel')
@@ -662,27 +715,40 @@ That isn't how Redis transactions work. But, if we add a `watch` to `powerlevel`
 	redis.set('powerlevel', current + 1)
 	redis.exec()
 
-If another client changes the value of `powerlevel` after we've called `watch` on it, our transaction will fail. If no client changes the value, the set will work. We can execute this code in a loop until it works.
+If another client changes the value of `powerlevel` after we've called `watch` on it, our transaction will fail. If no
+client changes the value, the set will work. We can execute this code in a loop until it works.
 
 ## Keys Anti-Pattern
 
-In the next chapter we'll talk about commands that aren't specifically related to data structures. Some of these are administrative or debugging tools. But there's one I'd like to talk about in particular: the `keys` command. This command takes a pattern and finds all the matching keys. This command seems like it's well suited for a number of tasks, but it should never be used in production code. Why? Because it does a linear scan through all the keys looking for matches. Or, put simply, it's slow.
+In the next chapter we'll talk about commands that aren't specifically related to data structures. Some of these are
+administrative or debugging tools. But there's one I'd like to talk about in particular: the `keys` command. This
+command takes a pattern and finds all the matching keys. This command seems like it's well suited for a number of tasks,
+but it should never be used in production code. Why? Because it does a linear scan through all the keys looking for
+matches. Or, put simply, it's slow.
 
-How do people try and use it? Say you are building a hosted bug tracking service. Each account will have an `id` and you might decide to store each bug into a string value with a key that looks like `bug:account_id:bug_id`. If you ever need to find all of an account's bugs (to display them, or maybe delete them if they delete their account), you might be tempted (as I was!) to use the `keys` command:
+How do people try and use it? Say you are building a hosted bug tracking service. Each account will have an `id` and you
+might decide to store each bug into a string value with a key that looks like `bug:account_id:bug_id`. If you ever need
+to find all of an account's bugs (to display them, or maybe delete them if they delete their account), you might be
+tempted (as I was!) to use the `keys` command:
 
 	keys bug:1233:*
 
-The better solution is to use a hash. Much like we can use hashes to provide a way to expose secondary indexes, so too can we use them to organize our data:
+The better solution is to use a hash. Much like we can use hashes to provide a way to expose secondary indexes, so too
+can we use them to organize our data:
 
 	hset bugs:1233 1 "{id:1, account: 1233, subject: '...'}"
 	hset bugs:1233 2 "{id:2, account: 1233, subject: '...'}"
 
-To get all the bug ids for an account we simply call `hkeys bugs:1233`. To delete a specific bug we can do `hdel bugs:1233 2` and to delete an account we can delete the key via `del bugs:1233`.
+To get all the bug ids for an account we simply call `hkeys bugs:1233`. To delete a specific bug we can do
+`hdel bugs:1233 2` and to delete an account we can delete the key via `del bugs:1233`.
 
 
 ## In This Chapter
 
-This chapter, combined with the previous one, has hopefully given you some insight on how to use Redis to power real features. There are a number of other patterns you can use to build all types of things, but the real key is to understand the fundamental data structures and to get a sense for how they can be used to achieve things beyond your initial perspective.
+This chapter, combined with the previous one, has hopefully given you some insight on how to use Redis to power real
+features. There are a number of other patterns you can use to build all types of things, but the real key is to
+understand the fundamental data structures and to get a sense for how they can be used to achieve things beyond your
+initial perspective.
 
 # Chapter 4 - Beyond The Data Structures
 
