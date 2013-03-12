@@ -610,33 +610,38 @@ C'est quelque chose que nous allons être amenés à faire assez souvent. Pour m
 les Hashs ont vraiment un intérêt, mais ce n'est pas un cas d'utilisation si évident tant que nous ne l'avons pas
 rencontré.
 
-## References and Indexes
+## Index et Références
 
-We've seen a couple examples of having one value reference another. We saw it when we looked at our list example, and
-we saw it in the section above when using hashes to make querying a little easier. What this comes down to is
-essentially having to manually manage your indexes and references between values. Being honest, I think we can say
-that's a bit of a downer, especially when you consider having to manage/update/delete these references manually. There
-is no magic solution to solving this problem in Redis.
+Nous avons vu un ensemble d'exemples où nous avions une valeur en référencer une autre. Nous avons vu cela avec notre
+ exemple de liste, et nous avons vu cela dans la section précédente quand nous avons utilisée des Hashs pour faire
+ des requêtes de manière plus simple. Tout ceci revient finalement à gérer manuellement vos index et les références
+ entre valeurs. Il faut être honnête, je pense que nous pouvons dire que c'est un point négatif,
+ tout particulièrement quand vous considérez avoir à mettre à jour/gérer/supprimer ces références manuellement. Il
+ n'y a pas de soluiton magique pour résoudre ce problème dans Redis.
 
-We already saw how sets are often used to implement this type of manual index:
+Nous avons déjà vu comment les ensembles sont souvent utilisés pour implémenter manuellement des index :
 
 	sadd friends:leto ghanima paul chani jessica
 
-Each member of this set is a reference to a Redis string value containing details on the actual user. What if `chani`
-changes her name, or deletes her account? Maybe it would make sense to also track the inverse relationships:
+Chaque membre de cet ensemble est une référence à une valeur contenue par une String Redis contenant les détails pour
+ chaque utilisateur. Et que se passe-t-il si `chani` change son nom ou supprime son compte? Il fera alors
+ peut-être sens de garder une trace des relations inverses :
 
 	sadd friends_of:chani leto paul
 
-Maintenance cost aside, if you are anything like me, you might cringe at the processing and memory cost of having these
-extra indexed values. In the next section we'll talk about ways to reduce the performance cost of having to do extra
-round trips (we briefly talked about it in the first chapter).
+Mis à part les coûts de maintenance, si vous êtes un peu comme moi, vous pourriez peut-être reculer devant le surcoût
+ en terme de mémoire et de calcul impliqué par ces valeurs indexées supplémentaires. Dans la prochaine section,
+ nous allons parler des manières de réduire les coûts de performance impliqués par des opération supplémentaires
+ (nous en avons rapidement parlé dans le premier chapitre).
 
-If you actually think about it though, relational databases have the same overhead. Indexes take memory, must be scanned
-or ideally seeked and then the corresponding records must be looked up. The overhead is neatly abstracted away (and they
-do a lot of optimizations in terms of the processing to make it very efficient).
+Si cependant vous y pensez quand même, les bases de données relationnelles ont les mêmes surcoûts. Les index occupent
+ de la mémoire, doivent être scannés, ou idéalement recherchez et finalement les enregistrements correspondant
+ peuvent être récupérés. Le surcoût est ainsi soigneusement abstrait (et ils réalisent un grand nombre
+ d'optimisations en terme de calcul afin de rendre tout ça aussi efficace que possible).
 
-Again, having to manually deal with references in Redis is unfortunate. But any initial concerns you have about the
-performance or memory implications of this should be tested. I think you'll find it a non-issue.
+Encore, avoir à gérer manuellement des références avec Redis est un inconvénient. Mais il est nécessaire de réaliser
+des tests pour avoir des informations sur les implications en terme de performance et de calcul de ces opérations. Je
+ pense que vous trouverez que ce n'est pas un vrai problème.
 
 ## Round Trips and Pipelining
 
