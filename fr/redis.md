@@ -745,37 +745,40 @@ Si un autre client change la valeur de `powerlevel` après que nous aillons appe
 notre transaction va échouer. Si aucun client ne change cette valeur, le `set` va fonctionner. Nous pouvons exécuter
 ce code dans une boucle jusqu'à ce qu'il fonctionne.
 
-## Keys Anti-Pattern
+## Anti-Pattern de clée
 
-In the next chapter we'll talk about commands that aren't specifically related to data structures. Some of these are
-administrative or debugging tools. But there's one I'd like to talk about in particular: the `keys` command. This
-command takes a pattern and finds all the matching keys. This command seems like it's well suited for a number of tasks,
-but it should never be used in production code. Why? Because it does a linear scan through all the keys looking for
-matches. Or, put simply, it's slow.
+Dans le prochain chapitre, nous allons parler des commandes qui ne sont pas spécifiquement reliées aux structures de
+données. Certains d'entre elles permettent l'administration de Redis ou sont des outils de débuggage. Mais il y en a
+une dont je souhaiterais tout particulièrement parler : la commande `keys`. Cette commande prend un pattern et
+retourne les clées correspondantes. Cette commande semble bien adaptée pour un grand nombre de tâches,
+mais elle ne doit jamais être utilisée en prodution. Pourquoi? Parce qu'elle réalise une recherche linéaire sur
+toutes les clées pour trouver les bonnes. Ou dit simplement, elle est lente.
 
-How do people try and use it? Say you are building a hosted bug tracking service. Each account will have an `id` and you
-might decide to store each bug into a string value with a key that looks like `bug:account_id:bug_id`. If you ever need
-to find all of an account's bugs (to display them, or maybe delete them if they delete their account), you might be
-tempted (as I was!) to use the `keys` command:
+De quelle manière est ce qu'elle est testée et utilisée? Disons que vous soyez en train de développer un système de
+bug tracker. Chaque compte aura un `id` et vous pourriez décider de stocker chaque bug dans une String avec une
+clée qui pourrait être `bug:account_id:bug_id`. Si vous souhaitez trouver tout les bugs associés à un compte (afin
+de les afficher ou pour supprimer le compte correspondant), vous pourriez être tentés (comme je l'ai été)
+d'utiliser la commande `keys` :
 
 	keys bug:1233:*
 
-The better solution is to use a hash. Much like we can use hashes to provide a way to expose secondary indexes, so too
-can we use them to organize our data:
+La meilleure solution est d'utiliser un Hash. De la même manière que nous pouvons utiliser les Hashs pour fournir un
+moyen d'exposer des index secondaires, nous pouvons aussi les utiliser pour organiser nos données :
 
 	hset bugs:1233 1 "{id:1, account: 1233, subject: '...'}"
 	hset bugs:1233 2 "{id:2, account: 1233, subject: '...'}"
 
-To get all the bug ids for an account we simply call `hkeys bugs:1233`. To delete a specific bug we can do
-`hdel bugs:1233 2` and to delete an account we can delete the key via `del bugs:1233`.
+Pour récupérer les ids de tout les bugs pour un compte, nous avons simplement à exécuter la commande `hkeys
+bugs:1233`. Pour supprimer un bug spécifique, nous pouvons effectuer l'appel suivant `hdel bugs:1233 2` et pour
+supprimer un bug, nous pouvons supprimer la clée via l'appel `del bugs:1233`.
 
+## Dans ce chapitre
 
-## In This Chapter
-
-This chapter, combined with the previous one, has hopefully given you some insight on how to use Redis to power real
-features. There are a number of other patterns you can use to build all types of things, but the real key is to
-understand the fundamental data structures and to get a sense for how they can be used to achieve things beyond your
-initial perspective.
+Ce chapitre, combiné avec le précédent, vous a donné un certain nombre d'idées sur les façons d'utiliser Redis pour
+réaliser des choses de manière très puissante. Il y a un certain nombre de patterns que vous utiliser utiliser pour
+construire toute sorte de choses, mais la vraie clée est la compréhension des structures de données fondamentales et
+d'obtenir une idée sur la manière dont elles peuvent être utilisées pour réaliser des choses que nous n'auriez pas
+imaginé dans un premier temps.
 
 # Chapter 4 - Beyond The Data Structures
 
