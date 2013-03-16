@@ -685,50 +685,55 @@ Comme vous pouvez l'imaginer, le pipelining peut vraiment accélérer l'exécuti
 
 ## Transactions
 
-Every Redis command is atomic, including the ones that do multiple things. Additionally, Redis has support for
-transactions when using multiple commands.
+Chaque commande Redis est atomique, et ceci inclus d'ailleurs celles qui réalisent plusieurs opérations à la fois. En
+ plus, Redis support les transactions quand de multiples commandes sont réalisées.
 
-You might not know it, but Redis is actually single-threaded, which is how every command is guaranteed to be atomic.
-While one command is executing, no other command will run. (We'll briefly talk about scaling in a later chapter.) This
-is particularly useful when you consider that some commands do multiple things. For example:
+Vous ne le savez peut-être pas, mais Redis est en fait mono-threadé, ce qui est la raison pour laquelle chaque
+commande est garantie atomique. Pendant qu'une opération est exécutée, aucune autre commande ne peut être lancée.
+(Nous parlerons brièvement des aspects scalabilité dans un prochain chapitre). Ceci est particulièrement utile quand
+on sait que certaines commandes réalisent plusieurs opérations à la fois. Par exemple :
 
-`incr` is essentially a `get` followed by a `set`
+`incr` est essentiellement un `get` suivi d'un `set`
 
-`getset` sets a new value and returns the original
+`getset` fixe une nouvelle valeur et retourne l'original
 
-`setnx` first checks if the key exists, and only sets the value if it does not
+`setnx` vérifie d'abord que la clée existe, et ne la fixe que si la valeur n'existait pas
 
-Although these commands are useful, you'll inevitably need to run multiple commands as an atomic group. You do so by
-first issuing the `multi` command, followed by all the commands you want to execute as part of the transaction, and
-finally executing `exec` to actually execute the commands or `discard` to throw away, and not execute the commands.
-What guarantee does Redis make about transactions?
+Même si ces commandes sont utiles, vous allez inévitablement devoir effectuer plusieurs commandes à la fois en tant
+que groupe atomique. Vous pouvez réaliser cette action en appelant tout d'abord la commande `multi`,
+suivie par toutes les commandes que vous souhaitez réaliser au sein de votre transaction,
+et enfin il est nécessaire d'exécuter `exec` pour effectivement exécuter les commandes ou alors `discard` pour tout
+arrêter et ne pas exécuter les commandes.
+Quelles sont les garanties fournies par Redis quand des transactions sont exécutées?
 
-* The commands will be executed in order
+* Les commandes seront exécutées dans l'ordre
 
-* The commands will be executed as a single atomic operation (without another client's command being executed halfway
-through)
+* Les commandes seront exécutées comme une seule opération atomique (sans qu'aucun autre commande d'un client
+ne soit exécutées pendant la transaction)
 
-* That either all or none of the commands in the transaction will be executed
+* Toutes les opérations de la transaction ou aucun ne sera exécutée
 
-You can, and should, test this in the command line interface. Also note that there's no reason why you can't combine
-pipelining and transactions.
+Vous pouvez, et devriez, tester ceci dans l'interface en ligne de commande. Notez aussi qu'il n'y a aucune raison
+pour ne pas combiner pipelining et transactions.
 
 	multi
 	hincrby groups:1percent balance -9000000000
 	hincrby groups:99percent balance 9000000000
 	exec
 
-Finally, Redis lets you specify a key (or keys) to watch and conditionally apply a transaction if the key(s) changed.
-This is used when you need to get values and execute code based on those values, all in a transaction. With the code
-above, we wouldn't be able to implement our own `incr` command since they are all executed together once `exec` is
-called. From code, we can't do:
+Enfin, Redis vous permet de définir une clée (ou plusieurs) à observer et le cas échéant,
+réaliser une transaction sur cette clée (ou plusieurs) ont changé. Ceci est utilisé quand vous avez besoin de
+récupérer des valeurs et exécuter du code basé sur ces valeurs, le temps à travers une transaction. Avec le code
+ci-dessus, nous ne seront pas capable d'implémenter notre propre commande `incr` dans la mesure où elle sont
+exécutées ensemble une fois que `exec` iest appelée. Depuis du code, nous ne pouvons pas faire :
 
 	redis.multi()
 	current = redis.get('powerlevel')
 	redis.set('powerlevel', current + 1)
 	redis.exec()
 
-That isn't how Redis transactions work. But, if we add a `watch` to `powerlevel`, we can do:
+Ce n'est pas la façon dont fonctionne Redis. Cependant, si nous ajoutons un appel à `watch` concernant `powerlevel`,
+nous pouvons faire la chose suivante :
 
 	redis.watch('powerlevel')
 	current = redis.get('powerlevel')
@@ -736,8 +741,9 @@ That isn't how Redis transactions work. But, if we add a `watch` to `powerlevel`
 	redis.set('powerlevel', current + 1)
 	redis.exec()
 
-If another client changes the value of `powerlevel` after we've called `watch` on it, our transaction will fail. If no
-client changes the value, the set will work. We can execute this code in a loop until it works.
+Si un autre client change la valeur de `powerlevel` après que nous aillons appelé `watch` sur elle,
+notre transaction va échouer. Si aucun client ne change cette valeur, le `set` va fonctionner. Nous pouvons exécuter
+ce code dans une boucle jusqu'à ce qu'il fonctionne.
 
 ## Keys Anti-Pattern
 
